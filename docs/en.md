@@ -1,0 +1,148 @@
+# PRONOTE for Gladys
+
+This integration brings **PRONOTE**, the school life software used by most French
+schools, into Gladys: grades, homework, timetable, absences and unread messages of
+a student — or of every child of a parent account.
+
+It reads PRONOTE the way the PRONOTE app does, every few minutes, and publishes
+what it finds as Gladys devices, scene triggers and dashboard widgets.
+
+> PRONOTE and Index Éducation are not involved in this integration. It uses the
+> open-source [pawnote](https://github.com/LiterateInk/Pawnote.js) library to speak
+> to PRONOTE.
+
+## Requirements
+
+- Gladys **5.1 or later**.
+- A PRONOTE **student** or **parent** account (teacher accounts are not supported).
+- The address of your PRONOTE space, as shown by your browser, for example
+  `https://0123456a.index-education.net/pronote/`.
+
+## Configuration
+
+In Gladys, open **Integrations → PRONOTE → Configuration**.
+
+| Field                   | What to put                                                                                            |
+| ----------------------- | ------------------------------------------------------------------------------------------------------ |
+| PRONOTE address         | The address of the PRONOTE space. The end (`eleve.html`, `parent.html`) is not needed.                 |
+| Kind of account         | **Student** for a student account, **Parent** for a parent account (one device per child).             |
+| Username / Password     | Your PRONOTE username and password.                                                                    |
+| Refresh interval (min)  | How often PRONOTE is read. 15 minutes is plenty; the server is shared by the whole school.             |
+| Homework horizon        | How many days ahead the homework to do is counted and listed (7 by default).                           |
+| Time zone of the school | `Europe/Paris` by default. Overseas schools: `Indian/Reunion`, `America/Martinique`, `Pacific/Noumea`… |
+| Detailed logs           | Turn on to understand a problem, then off again.                                                       |
+
+Save, then press **Test the connection**: it tells you who is logged in and what was
+found for each student.
+
+After the first login, PRONOTE gives the integration a **session token** which
+replaces the password for the next logins, as the PRONOTE mobile app does. It is
+kept in the integration's own storage.
+
+### Accounts that log in through an ENT
+
+If you reach PRONOTE through your region's ENT (Mon Bureau Numérique, ENT77,
+Skolengo…), you have no PRONOTE password. Use a **QR code** instead:
+
+1. In PRONOTE, on a computer, open the menu next to your name and choose **QR code
+   for the mobile app**. Pick a 4-digit code.
+2. Scan the QR code with your phone camera (not with the PRONOTE app): the phone
+   shows a text that starts with `{"jeton"`. Copy it.
+3. In Gladys, press **Log in with a QR code**, paste the text and type the 4-digit
+   code. Be quick: the QR code is valid for a few minutes only.
+
+Leave the address, username and password fields empty, or fill in the address
+only. The session is then kept the same way as after a password login.
+
+## Devices
+
+Press **Discover** (or wait for the first read) to see the devices, then create
+them.
+
+**One device per student**:
+
+| Feature                          | Value                                                                         |
+| -------------------------------- | ----------------------------------------------------------------------------- |
+| Overall average                  | The average of the current period, out of 20 (when the school shows it).      |
+| Homework to do                   | The homework not done yet, due within the homework horizon.                   |
+| Homework for the next school day | The homework not done yet, due on the next school day.                        |
+| Absences (period)                | The absences of the current period.                                           |
+| Delays (period)                  | The delays of the current period.                                             |
+| Next lesson                      | Text, e.g. `14:00 MATHEMATIQUES (B12)` (with the date when it is not today).  |
+| Next school day start            | Text, e.g. `08:00`: the first lesson that takes place on the next school day. |
+| Last grade                       | Text, e.g. `MATHEMATIQUES 15/20 (12/10)`.                                     |
+
+**One device for the account**: the number of **unread messages**.
+
+The devices are read-only: nothing is changed on PRONOTE.
+
+## Scenes
+
+### Triggers
+
+| Trigger                         | When                                                  | Variables                                                                                                          |
+| ------------------------------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| A new grade is published        | A grade appeared since the previous read.             | student name, subject, grade, out of, grade out of 20, grade as written, coefficient, class average, comment, date |
+| New homework is given           | Homework appeared or changed since the previous read. | student name, subject, description, due date                                                                       |
+| A lesson is canceled            | A lesson of the coming days is now canceled.          | student name, subject, date, start time, end time, PRONOTE status                                                  |
+| An absence or delay is recorded | The school recorded an absence or a delay.            | student name, kind (`absence` / `delay`), date, justified (`yes` / `no`), minutes late, reason                     |
+
+Every trigger can be limited to one student. The first read after installing only
+remembers what is already there: nothing is announced for the grades of the past
+weeks.
+
+### Actions
+
+- **Read PRONOTE now**: updates the devices and widgets at once. What it finds new
+  is announced by the triggers at the next timed read.
+- **Get the day of a student**: for today, tomorrow or the next school day, gives
+  the number of lessons, the start of the first one, the end of the last one, the
+  canceled subjects, and the homework to do as a list ready to be read aloud.
+
+Example: _every weekday at 07:00 → Get the day of a student (next school day) →
+Say "First lesson at {{first_lesson}}. Homework: {{homework_text}}"_.
+
+## Widgets
+
+- **PRONOTE student**: average, homework to do, absences, the next lesson, the next
+  school day, the last grade, the unread messages, and the list of homework. A
+  **Refresh** button reads PRONOTE now.
+- **PRONOTE timetable**: the lessons of today, tomorrow or the next school day, with
+  canceled lessons and tests flagged.
+
+Both show the last read: opening a dashboard never calls PRONOTE.
+
+## Buttons of the Configuration screen
+
+- **Test the connection**: reads PRONOTE now and says what was found, or why not.
+- **Log in with a QR code**: see above.
+- **Forget the saved session**: deletes the saved session token (to change account,
+  or after changing the password elsewhere).
+
+## Troubleshooting
+
+| Message                                     | What to do                                                                                                    |
+| ------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| PRONOTE refused the username or password    | Check them in the PRONOTE website. Reading is paused until you save the configuration or test the connection. |
+| PRONOTE asks to set up the account security | Log in once in the PRONOTE app or website to finish it (new password, PIN), then use the QR code login.       |
+| The IP address was suspended                | Too many failed logins: wait (usually an hour) before trying again.                                           |
+| The server cannot be reached                | Check the address. A busy server is tried again at the next read.                                             |
+
+Turn on **Detailed logs** to see each step in the integration logs. Passwords and
+tokens are never logged.
+
+## Known limits
+
+- **Parent accounts with several children**: the timetable is read for each
+  child, but for the grades, homework and absences PRONOTE may answer for the
+  child it selects by default. If two children show the same grades, use each
+  child's student account instead.
+- **Teacher accounts** are not supported.
+- PRONOTE has no notifications: news are found at each read, so a new grade shows
+  up within the refresh interval.
+
+## Your data
+
+The password stays in Gladys' secret configuration. The session token is kept in
+the integration's private storage; grades, homework and timetable are only kept in
+memory and published to your Gladys. Nothing is sent anywhere else.

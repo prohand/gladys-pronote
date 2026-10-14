@@ -1,0 +1,1057 @@
+{
+  "manifest_version": 1,
+  "type": "device",
+  "name": "PRONOTE",
+  "description": {
+    "en": "Grades, homework, timetable and absences from PRONOTE, with scene triggers and widgets.",
+    "fr": "Notes, devoirs, emploi du temps et absences PRONOTE, avec déclencheurs de scènes et widgets.",
+    "de": "Noten, Hausaufgaben, Stundenplan und Fehlzeiten aus PRONOTE, mit Szenenauslösern und Widgets.",
+    "es": "Notas, deberes, horario y ausencias de PRONOTE, con disparadores de escenas y widgets."
+  },
+  "version": "0.0.0",
+  "docker_image": "ghcr.io/prohand/gladys-pronote:0.0.0",
+  "gladys_version": ">=5.1.0",
+  "cover_image": "https://raw.githubusercontent.com/prohand/gladys-pronote/main/cover.png",
+  "categories": ["services", "notifications"],
+  "transports": ["cloud"],
+  "config_schema": [
+    {
+      "key": "intro",
+      "type": "section",
+      "label": {
+        "en": "Getting started",
+        "fr": "Pour commencer",
+        "de": "Erste Schritte",
+        "es": "Primeros pasos"
+      },
+      "description": {
+        "en": "The integration reads your PRONOTE space on the school's server, as the PRONOTE app does: grades, homework, timetable, absences and unread messages. Fill in the address of the PRONOTE space (the one you open in a browser), the kind of account, your username and password, then save. If you log in through an ENT (no PRONOTE password), leave the password empty and use the \"Log in with a QR code\" button below.",
+        "fr": "L'intégration lit votre espace PRONOTE sur le serveur de l'établissement, comme le fait l'application PRONOTE : notes, devoirs, emploi du temps, absences et messages non lus. Renseignez l'adresse de l'espace PRONOTE (celle que vous ouvrez dans un navigateur), le type de compte, votre identifiant et votre mot de passe, puis enregistrez. Si vous vous connectez par un ENT (pas de mot de passe PRONOTE), laissez le mot de passe vide et utilisez le bouton « Se connecter avec un QR code » plus bas.",
+        "de": "Die Integration liest deinen PRONOTE-Bereich auf dem Server der Schule, so wie die PRONOTE-App: Noten, Hausaufgaben, Stundenplan, Fehlzeiten und ungelesene Nachrichten. Gib die Adresse des PRONOTE-Bereichs ein (die du im Browser öffnest), die Kontoart, deinen Benutzernamen und dein Passwort, und speichere. Wenn du dich über ein ENT anmeldest (kein PRONOTE-Passwort), lass das Passwort leer und nutze unten die Schaltfläche „Mit QR-Code anmelden“.",
+        "es": "La integración lee su espacio PRONOTE en el servidor del centro, como hace la app PRONOTE: notas, deberes, horario, ausencias y mensajes no leídos. Indique la dirección del espacio PRONOTE (la que abre en un navegador), el tipo de cuenta, su usuario y su contraseña, y guarde. Si inicia sesión mediante un ENT (sin contraseña de PRONOTE), deje la contraseña vacía y use el botón «Iniciar sesión con un código QR» más abajo."
+      },
+      "links": [
+        {
+          "url": "https://github.com/prohand/gladys-pronote/blob/main/docs/en.md",
+          "label": {
+            "en": "Integration documentation",
+            "fr": "Documentation de l'intégration",
+            "de": "Dokumentation der Integration",
+            "es": "Documentación de la integración"
+          }
+        }
+      ]
+    },
+    {
+      "key": "url",
+      "type": "string",
+      "label": {
+        "en": "PRONOTE address",
+        "fr": "Adresse PRONOTE",
+        "de": "PRONOTE-Adresse",
+        "es": "Dirección de PRONOTE"
+      },
+      "description": {
+        "en": "The address of the PRONOTE space, as shown by the browser, e.g. https://0123456a.index-education.net/pronote/. The end of the address (eleve.html, parent.html) is not needed.",
+        "fr": "L'adresse de l'espace PRONOTE, telle que l'affiche le navigateur, par exemple https://0123456a.index-education.net/pronote/. La fin de l'adresse (eleve.html, parent.html) n'est pas nécessaire.",
+        "de": "Die Adresse des PRONOTE-Bereichs, wie der Browser sie anzeigt, z. B. https://0123456a.index-education.net/pronote/. Das Ende der Adresse (eleve.html, parent.html) wird nicht benötigt.",
+        "es": "La dirección del espacio PRONOTE, tal como la muestra el navegador, p. ej. https://0123456a.index-education.net/pronote/. El final de la dirección (eleve.html, parent.html) no es necesario."
+      },
+      "placeholder": {
+        "en": "https://0123456a.index-education.net/pronote/",
+        "fr": "https://0123456a.index-education.net/pronote/",
+        "de": "https://0123456a.index-education.net/pronote/",
+        "es": "https://0123456a.index-education.net/pronote/"
+      },
+      "required": false
+    },
+    {
+      "key": "account_kind",
+      "type": "select",
+      "label": {
+        "en": "Kind of account",
+        "fr": "Type de compte",
+        "de": "Kontoart",
+        "es": "Tipo de cuenta"
+      },
+      "description": {
+        "en": "Student: one student. Parent: every child of the account, one device each.",
+        "fr": "Élève : un élève. Parent : chaque enfant du compte, un appareil chacun.",
+        "de": "Schüler: ein Schüler. Eltern: jedes Kind des Kontos, je ein Gerät.",
+        "es": "Alumno: un alumno. Padres: cada hijo de la cuenta, un dispositivo cada uno."
+      },
+      "required": false,
+      "default": "student",
+      "options": [
+        {
+          "value": "student",
+          "label": {
+            "en": "Student",
+            "fr": "Élève",
+            "de": "Schüler",
+            "es": "Alumno"
+          }
+        },
+        {
+          "value": "parent",
+          "label": {
+            "en": "Parent",
+            "fr": "Parent",
+            "de": "Eltern",
+            "es": "Padres"
+          }
+        }
+      ]
+    },
+    {
+      "key": "username",
+      "type": "string",
+      "label": {
+        "en": "Username",
+        "fr": "Identifiant",
+        "de": "Benutzername",
+        "es": "Usuario"
+      },
+      "required": false
+    },
+    {
+      "key": "password",
+      "type": "secret",
+      "label": {
+        "en": "Password",
+        "fr": "Mot de passe",
+        "de": "Passwort",
+        "es": "Contraseña"
+      },
+      "description": {
+        "en": "Used only when there is no saved session: after the first login, PRONOTE gives a session token that replaces it, kept in the integration's own storage.",
+        "fr": "Utilisé seulement quand il n'y a pas de session enregistrée : après la première connexion, PRONOTE donne un jeton de session qui le remplace, gardé dans le stockage propre à l'intégration.",
+        "de": "Wird nur verwendet, wenn keine Sitzung gespeichert ist: Nach der ersten Anmeldung gibt PRONOTE ein Sitzungstoken, das es ersetzt und im eigenen Speicher der Integration bleibt.",
+        "es": "Solo se usa cuando no hay sesión guardada: tras el primer inicio de sesión, PRONOTE entrega un token de sesión que la sustituye, guardado en el almacenamiento propio de la integración."
+      },
+      "required": false
+    },
+    {
+      "key": "refresh_interval",
+      "type": "number",
+      "label": {
+        "en": "Refresh interval (min)",
+        "fr": "Intervalle de rafraîchissement (min)",
+        "de": "Aktualisierungsintervall (min)",
+        "es": "Intervalo de actualización (min)"
+      },
+      "description": {
+        "en": "How often PRONOTE is read, in minutes. The server is shared by the whole school: 15 minutes is plenty for grades and homework.",
+        "fr": "Fréquence de lecture de PRONOTE, en minutes. Le serveur est partagé par tout l'établissement : 15 minutes suffisent largement pour les notes et les devoirs.",
+        "de": "Wie oft PRONOTE abgerufen wird, in Minuten. Der Server wird von der ganzen Schule geteilt: 15 Minuten reichen für Noten und Hausaufgaben völlig aus.",
+        "es": "Frecuencia de lectura de PRONOTE, en minutos. El servidor lo comparte todo el centro: 15 minutos bastan para notas y deberes."
+      },
+      "required": false,
+      "default": 15,
+      "min": 5,
+      "max": 120
+    },
+    {
+      "key": "homework_days",
+      "type": "number",
+      "label": {
+        "en": "Homework horizon (days)",
+        "fr": "Horizon des devoirs (jours)",
+        "de": "Hausaufgaben-Zeitraum (Tage)",
+        "es": "Horizonte de deberes (días)"
+      },
+      "description": {
+        "en": "How many days ahead the homework to do is counted and listed.",
+        "fr": "Nombre de jours à l'avance pour compter et lister les devoirs à faire.",
+        "de": "Wie viele Tage im Voraus die offenen Hausaufgaben gezählt und aufgelistet werden.",
+        "es": "Cuántos días por adelantado se cuentan y listan los deberes pendientes."
+      },
+      "required": false,
+      "default": 7,
+      "min": 1,
+      "max": 21
+    },
+    {
+      "key": "timezone",
+      "type": "string",
+      "label": {
+        "en": "Time zone of the school",
+        "fr": "Fuseau horaire de l'établissement",
+        "de": "Zeitzone der Schule",
+        "es": "Zona horaria del centro"
+      },
+      "description": {
+        "en": "PRONOTE gives times without a time zone: they are read in this one. An IANA name, e.g. Europe/Paris, Indian/Reunion, America/Martinique.",
+        "fr": "PRONOTE donne les heures sans fuseau horaire : elles sont lues dans celui-ci. Un nom IANA, par exemple Europe/Paris, Indian/Reunion, America/Martinique.",
+        "de": "PRONOTE liefert Uhrzeiten ohne Zeitzone: Sie werden in dieser gelesen. Ein IANA-Name, z. B. Europe/Paris, Indian/Reunion, America/Martinique.",
+        "es": "PRONOTE da las horas sin zona horaria: se leen en esta. Un nombre IANA, p. ej. Europe/Paris, Indian/Reunion, America/Martinique."
+      },
+      "placeholder": {
+        "en": "Europe/Paris",
+        "fr": "Europe/Paris",
+        "de": "Europe/Paris",
+        "es": "Europe/Paris"
+      },
+      "required": false,
+      "default": "Europe/Paris"
+    },
+    {
+      "key": "debug_logs",
+      "type": "boolean",
+      "label": {
+        "en": "Detailed logs (debug)",
+        "fr": "Journaux détaillés (debug)",
+        "de": "Detaillierte Protokolle (Debug)",
+        "es": "Registros detallados (depuración)"
+      },
+      "description": {
+        "en": "Log every step of the PRONOTE reads. Passwords and tokens are never logged.",
+        "fr": "Journalise chaque étape des lectures PRONOTE. Les mots de passe et jetons ne sont jamais journalisés.",
+        "de": "Protokolliert jeden Schritt der PRONOTE-Abrufe. Passwörter und Tokens werden nie protokolliert.",
+        "es": "Registra cada paso de las lecturas de PRONOTE. Las contraseñas y los tokens nunca se registran."
+      },
+      "required": false,
+      "default": false
+    }
+  ],
+  "actions": [
+    {
+      "key": "test_connection",
+      "label": {
+        "en": "Test the connection",
+        "fr": "Tester la connexion",
+        "de": "Verbindung testen",
+        "es": "Probar la conexión"
+      },
+      "timeout_seconds": 90
+    },
+    {
+      "key": "login_qr_code",
+      "label": {
+        "en": "Log in with a QR code",
+        "fr": "Se connecter avec un QR code",
+        "de": "Mit QR-Code anmelden",
+        "es": "Iniciar sesión con un código QR"
+      },
+      "timeout_seconds": 60,
+      "fields": [
+        {
+          "key": "login_qr_code_intro",
+          "type": "section",
+          "label": {
+            "en": "For ENT accounts",
+            "fr": "Pour les comptes ENT",
+            "de": "Für ENT-Konten",
+            "es": "Para cuentas ENT"
+          },
+          "description": {
+            "en": "In PRONOTE on a computer, open the menu next to your name and choose \"QR code for the mobile app\", pick a 4-digit code, and scan the QR code with your phone camera: it shows a text starting with {\"jeton\". Paste that text below with the 4-digit code. The QR code is valid for a few minutes.",
+            "fr": "Dans PRONOTE sur un ordinateur, ouvrez le menu à côté de votre nom et choisissez « QR code pour l'application mobile », choisissez un code à 4 chiffres, et scannez le QR code avec l'appareil photo du téléphone : il affiche un texte qui commence par {\"jeton\". Collez ce texte ci-dessous avec le code à 4 chiffres. Le QR code est valable quelques minutes.",
+            "de": "Öffne in PRONOTE am Computer das Menü neben deinem Namen und wähle „QR-Code für die mobile App“, wähle einen 4-stelligen Code und scanne den QR-Code mit der Handykamera: Er zeigt einen Text, der mit {\"jeton\" beginnt. Füge diesen Text unten zusammen mit dem 4-stelligen Code ein. Der QR-Code ist einige Minuten gültig.",
+            "es": "En PRONOTE en un ordenador, abra el menú junto a su nombre y elija «Código QR para la app móvil», elija un código de 4 cifras y escanee el código QR con la cámara del teléfono: muestra un texto que empieza por {\"jeton\". Pegue ese texto abajo con el código de 4 cifras. El código QR es válido unos minutos."
+          }
+        },
+        {
+          "key": "qr_content",
+          "type": "string",
+          "label": {
+            "en": "Text of the QR code",
+            "fr": "Texte du QR code",
+            "de": "Text des QR-Codes",
+            "es": "Texto del código QR"
+          },
+          "placeholder": {
+            "en": "{\"jeton\":\"…\",\"login\":\"…\",\"url\":\"https://…/mobile.eleve.html\"}",
+            "fr": "{\"jeton\":\"…\",\"login\":\"…\",\"url\":\"https://…/mobile.eleve.html\"}",
+            "de": "{\"jeton\":\"…\",\"login\":\"…\",\"url\":\"https://…/mobile.eleve.html\"}",
+            "es": "{\"jeton\":\"…\",\"login\":\"…\",\"url\":\"https://…/mobile.eleve.html\"}"
+          },
+          "required": true
+        },
+        {
+          "key": "pin",
+          "type": "string",
+          "label": {
+            "en": "4-digit code",
+            "fr": "Code à 4 chiffres",
+            "de": "4-stelliger Code",
+            "es": "Código de 4 cifras"
+          },
+          "placeholder": {
+            "en": "1234",
+            "fr": "1234",
+            "de": "1234",
+            "es": "1234"
+          },
+          "required": true
+        }
+      ]
+    },
+    {
+      "key": "forget_session",
+      "label": {
+        "en": "Forget the saved session",
+        "fr": "Oublier la session enregistrée",
+        "de": "Gespeicherte Sitzung vergessen",
+        "es": "Olvidar la sesión guardada"
+      },
+      "timeout_seconds": 10
+    }
+  ],
+  "scene_triggers": [
+    {
+      "key": "new_grade",
+      "label": {
+        "en": "A new grade is published",
+        "fr": "Une nouvelle note est publiée",
+        "de": "Eine neue Note wird veröffentlicht",
+        "es": "Se publica una nueva nota"
+      },
+      "description": {
+        "en": "A grade appeared in PRONOTE since the previous read.",
+        "fr": "Une note est apparue dans PRONOTE depuis la lecture précédente.",
+        "de": "Seit dem letzten Abruf ist in PRONOTE eine Note erschienen.",
+        "es": "Ha aparecido una nota en PRONOTE desde la lectura anterior."
+      },
+      "fields": [
+        {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Student",
+            "fr": "Élève",
+            "de": "Schüler",
+            "es": "Alumno"
+          },
+          "required": false
+        }
+      ],
+      "variables": [
+        {
+          "key": "student_name",
+          "type": "string",
+          "label": {
+            "en": "Student name",
+            "fr": "Nom de l'élève",
+            "de": "Name des Schülers",
+            "es": "Nombre del alumno"
+          }
+        },
+        {
+          "key": "subject",
+          "type": "string",
+          "label": {
+            "en": "Subject",
+            "fr": "Matière",
+            "de": "Fach",
+            "es": "Asignatura"
+          }
+        },
+        {
+          "key": "grade",
+          "type": "number",
+          "label": {
+            "en": "Grade",
+            "fr": "Note",
+            "de": "Note",
+            "es": "Nota"
+          }
+        },
+        {
+          "key": "out_of",
+          "type": "number",
+          "label": {
+            "en": "Out of",
+            "fr": "Sur",
+            "de": "Von",
+            "es": "Sobre"
+          }
+        },
+        {
+          "key": "grade_20",
+          "type": "number",
+          "label": {
+            "en": "Grade out of 20",
+            "fr": "Note sur 20",
+            "de": "Note von 20",
+            "es": "Nota sobre 20"
+          }
+        },
+        {
+          "key": "grade_label",
+          "type": "string",
+          "label": {
+            "en": "Grade as written",
+            "fr": "Note telle qu'écrite",
+            "de": "Note wie geschrieben",
+            "es": "Nota tal como se escribe"
+          }
+        },
+        {
+          "key": "coefficient",
+          "type": "number",
+          "label": {
+            "en": "Coefficient",
+            "fr": "Coefficient",
+            "de": "Gewichtung",
+            "es": "Coeficiente"
+          }
+        },
+        {
+          "key": "class_average",
+          "type": "number",
+          "label": {
+            "en": "Class average",
+            "fr": "Moyenne de la classe",
+            "de": "Klassendurchschnitt",
+            "es": "Media de la clase"
+          }
+        },
+        {
+          "key": "comment",
+          "type": "string",
+          "label": {
+            "en": "Comment",
+            "fr": "Commentaire",
+            "de": "Kommentar",
+            "es": "Comentario"
+          }
+        },
+        {
+          "key": "date",
+          "type": "string",
+          "label": {
+            "en": "Date",
+            "fr": "Date",
+            "de": "Datum",
+            "es": "Fecha"
+          }
+        }
+      ]
+    },
+    {
+      "key": "new_homework",
+      "label": {
+        "en": "New homework is given",
+        "fr": "Un nouveau devoir est donné",
+        "de": "Neue Hausaufgaben werden aufgegeben",
+        "es": "Se ponen nuevos deberes"
+      },
+      "description": {
+        "en": "Homework appeared or changed in PRONOTE since the previous read.",
+        "fr": "Un devoir est apparu ou a changé dans PRONOTE depuis la lecture précédente.",
+        "de": "Seit dem letzten Abruf sind in PRONOTE Hausaufgaben erschienen oder geändert worden.",
+        "es": "Han aparecido o cambiado deberes en PRONOTE desde la lectura anterior."
+      },
+      "fields": [
+        {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Student",
+            "fr": "Élève",
+            "de": "Schüler",
+            "es": "Alumno"
+          },
+          "required": false
+        }
+      ],
+      "variables": [
+        {
+          "key": "student_name",
+          "type": "string",
+          "label": {
+            "en": "Student name",
+            "fr": "Nom de l'élève",
+            "de": "Name des Schülers",
+            "es": "Nombre del alumno"
+          }
+        },
+        {
+          "key": "subject",
+          "type": "string",
+          "label": {
+            "en": "Subject",
+            "fr": "Matière",
+            "de": "Fach",
+            "es": "Asignatura"
+          }
+        },
+        {
+          "key": "description",
+          "type": "string",
+          "label": {
+            "en": "Description",
+            "fr": "Description",
+            "de": "Beschreibung",
+            "es": "Descripción"
+          }
+        },
+        {
+          "key": "due_date",
+          "type": "string",
+          "label": {
+            "en": "Due date",
+            "fr": "Pour le",
+            "de": "Fällig am",
+            "es": "Fecha de entrega"
+          }
+        }
+      ]
+    },
+    {
+      "key": "lesson_canceled",
+      "label": {
+        "en": "A lesson is canceled",
+        "fr": "Un cours est annulé",
+        "de": "Eine Stunde fällt aus",
+        "es": "Se cancela una clase"
+      },
+      "description": {
+        "en": "A lesson of the coming days is now canceled (teacher absent, class moved…).",
+        "fr": "Un cours des prochains jours est désormais annulé (professeur absent, cours déplacé…).",
+        "de": "Eine Stunde der nächsten Tage fällt jetzt aus (Lehrkraft abwesend, Stunde verlegt…).",
+        "es": "Una clase de los próximos días queda cancelada (profesor ausente, clase trasladada…)."
+      },
+      "fields": [
+        {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Student",
+            "fr": "Élève",
+            "de": "Schüler",
+            "es": "Alumno"
+          },
+          "required": false
+        }
+      ],
+      "variables": [
+        {
+          "key": "student_name",
+          "type": "string",
+          "label": {
+            "en": "Student name",
+            "fr": "Nom de l'élève",
+            "de": "Name des Schülers",
+            "es": "Nombre del alumno"
+          }
+        },
+        {
+          "key": "subject",
+          "type": "string",
+          "label": {
+            "en": "Subject",
+            "fr": "Matière",
+            "de": "Fach",
+            "es": "Asignatura"
+          }
+        },
+        {
+          "key": "date",
+          "type": "string",
+          "label": {
+            "en": "Date",
+            "fr": "Date",
+            "de": "Datum",
+            "es": "Fecha"
+          }
+        },
+        {
+          "key": "start_time",
+          "type": "string",
+          "label": {
+            "en": "Start time",
+            "fr": "Heure de début",
+            "de": "Beginn",
+            "es": "Hora de inicio"
+          }
+        },
+        {
+          "key": "end_time",
+          "type": "string",
+          "label": {
+            "en": "End time",
+            "fr": "Heure de fin",
+            "de": "Ende",
+            "es": "Hora de fin"
+          }
+        },
+        {
+          "key": "status",
+          "type": "string",
+          "label": {
+            "en": "PRONOTE status",
+            "fr": "Statut PRONOTE",
+            "de": "PRONOTE-Status",
+            "es": "Estado en PRONOTE"
+          }
+        }
+      ]
+    },
+    {
+      "key": "new_absence",
+      "label": {
+        "en": "An absence or delay is recorded",
+        "fr": "Une absence ou un retard est saisi",
+        "de": "Eine Fehlzeit oder Verspätung wird erfasst",
+        "es": "Se registra una ausencia o un retraso"
+      },
+      "description": {
+        "en": "The school recorded an absence or a delay since the previous read.",
+        "fr": "L'établissement a saisi une absence ou un retard depuis la lecture précédente.",
+        "de": "Die Schule hat seit dem letzten Abruf eine Fehlzeit oder Verspätung erfasst.",
+        "es": "El centro ha registrado una ausencia o un retraso desde la lectura anterior."
+      },
+      "fields": [
+        {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Student",
+            "fr": "Élève",
+            "de": "Schüler",
+            "es": "Alumno"
+          },
+          "required": false
+        },
+        {
+          "key": "kind",
+          "type": "multi_select",
+          "label": {
+            "en": "Kind",
+            "fr": "Type",
+            "de": "Art",
+            "es": "Tipo"
+          },
+          "options": [
+            {
+              "value": "absence",
+              "label": {
+                "en": "Absence",
+                "fr": "Absence",
+                "de": "Fehlzeit",
+                "es": "Ausencia"
+              }
+            },
+            {
+              "value": "delay",
+              "label": {
+                "en": "Delay",
+                "fr": "Retard",
+                "de": "Verspätung",
+                "es": "Retraso"
+              }
+            }
+          ]
+        }
+      ],
+      "variables": [
+        {
+          "key": "student_name",
+          "type": "string",
+          "label": {
+            "en": "Student name",
+            "fr": "Nom de l'élève",
+            "de": "Name des Schülers",
+            "es": "Nombre del alumno"
+          }
+        },
+        {
+          "key": "kind",
+          "type": "string",
+          "label": {
+            "en": "Kind (absence or delay)",
+            "fr": "Type (absence ou retard)",
+            "de": "Art (Fehlzeit oder Verspätung)",
+            "es": "Tipo (ausencia o retraso)"
+          }
+        },
+        {
+          "key": "date",
+          "type": "string",
+          "label": {
+            "en": "Date",
+            "fr": "Date",
+            "de": "Datum",
+            "es": "Fecha"
+          }
+        },
+        {
+          "key": "justified",
+          "type": "string",
+          "label": {
+            "en": "Justified (yes/no)",
+            "fr": "Justifié (yes/no)",
+            "de": "Entschuldigt (yes/no)",
+            "es": "Justificado (yes/no)"
+          }
+        },
+        {
+          "key": "minutes",
+          "type": "number",
+          "label": {
+            "en": "Minutes late",
+            "fr": "Minutes de retard",
+            "de": "Minuten Verspätung",
+            "es": "Minutos de retraso"
+          }
+        },
+        {
+          "key": "reason",
+          "type": "string",
+          "label": {
+            "en": "Reason",
+            "fr": "Motif",
+            "de": "Grund",
+            "es": "Motivo"
+          }
+        }
+      ]
+    }
+  ],
+  "scene_actions": [
+    {
+      "key": "refresh",
+      "label": {
+        "en": "Read PRONOTE now",
+        "fr": "Lire PRONOTE maintenant",
+        "de": "PRONOTE jetzt abrufen",
+        "es": "Leer PRONOTE ahora"
+      },
+      "description": {
+        "en": "Update the devices and widgets now. The news it finds fire their triggers at the next timed read.",
+        "fr": "Met à jour appareils et widgets maintenant. Les nouveautés trouvées déclenchent à la lecture suivante.",
+        "de": "Aktualisiert Geräte und Widgets sofort. Gefundene Neuigkeiten lösen beim nächsten Abruf aus.",
+        "es": "Actualiza dispositivos y widgets ahora. Las novedades encontradas se disparan en la siguiente lectura."
+      },
+      "timeout_seconds": 90,
+      "outputs": [
+        {
+          "key": "success",
+          "type": "boolean",
+          "label": {
+            "en": "Read succeeded",
+            "fr": "Lecture réussie",
+            "de": "Abruf erfolgreich",
+            "es": "Lectura correcta"
+          }
+        },
+        {
+          "key": "students",
+          "type": "number",
+          "label": {
+            "en": "Students read",
+            "fr": "Élèves lus",
+            "de": "Abgerufene Schüler",
+            "es": "Alumnos leídos"
+          }
+        }
+      ]
+    },
+    {
+      "key": "day_summary",
+      "label": {
+        "en": "Get the day of a student",
+        "fr": "Obtenir la journée d'un élève",
+        "de": "Tag eines Schülers abrufen",
+        "es": "Obtener el día de un alumno"
+      },
+      "description": {
+        "en": "Lessons and homework of a day, from the last read, for a notification or a voice announcement.",
+        "fr": "Cours et devoirs d'une journée, d'après la dernière lecture, pour une notification ou une annonce vocale.",
+        "de": "Stunden und Hausaufgaben eines Tages aus dem letzten Abruf, für eine Benachrichtigung oder Ansage.",
+        "es": "Clases y deberes de un día, según la última lectura, para una notificación o un anuncio de voz."
+      },
+      "timeout_seconds": 10,
+      "fields": [
+        {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Student",
+            "fr": "Élève",
+            "de": "Schüler",
+            "es": "Alumno"
+          },
+          "required": true
+        },
+        {
+          "key": "day",
+          "type": "select",
+          "label": {
+            "en": "Day",
+            "fr": "Jour",
+            "de": "Tag",
+            "es": "Día"
+          },
+          "required": false,
+          "default": "next_school_day",
+          "options": [
+            {
+              "value": "today",
+              "label": {
+                "en": "Today",
+                "fr": "Aujourd'hui",
+                "de": "Heute",
+                "es": "Hoy"
+              }
+            },
+            {
+              "value": "tomorrow",
+              "label": {
+                "en": "Tomorrow",
+                "fr": "Demain",
+                "de": "Morgen",
+                "es": "Mañana"
+              }
+            },
+            {
+              "value": "next_school_day",
+              "label": {
+                "en": "Next school day",
+                "fr": "Prochain jour de cours",
+                "de": "Nächster Schultag",
+                "es": "Próximo día de clase"
+              }
+            }
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "key": "found",
+          "type": "boolean",
+          "label": {
+            "en": "There are lessons",
+            "fr": "Il y a cours",
+            "de": "Es gibt Unterricht",
+            "es": "Hay clases"
+          }
+        },
+        {
+          "key": "date",
+          "type": "string",
+          "label": {
+            "en": "Date (YYYY-MM-DD)",
+            "fr": "Date (AAAA-MM-JJ)",
+            "de": "Datum (JJJJ-MM-TT)",
+            "es": "Fecha (AAAA-MM-DD)"
+          }
+        },
+        {
+          "key": "student_name",
+          "type": "string",
+          "label": {
+            "en": "Student name",
+            "fr": "Nom de l'élève",
+            "de": "Name des Schülers",
+            "es": "Nombre del alumno"
+          }
+        },
+        {
+          "key": "lessons",
+          "type": "number",
+          "label": {
+            "en": "Lessons held",
+            "fr": "Cours maintenus",
+            "de": "Stattfindende Stunden",
+            "es": "Clases que se imparten"
+          }
+        },
+        {
+          "key": "canceled",
+          "type": "number",
+          "label": {
+            "en": "Lessons canceled",
+            "fr": "Cours annulés",
+            "de": "Ausfallende Stunden",
+            "es": "Clases canceladas"
+          }
+        },
+        {
+          "key": "first_lesson",
+          "type": "string",
+          "label": {
+            "en": "First lesson start",
+            "fr": "Début du premier cours",
+            "de": "Beginn der ersten Stunde",
+            "es": "Inicio de la primera clase"
+          }
+        },
+        {
+          "key": "first_subject",
+          "type": "string",
+          "label": {
+            "en": "First lesson subject",
+            "fr": "Matière du premier cours",
+            "de": "Fach der ersten Stunde",
+            "es": "Asignatura de la primera clase"
+          }
+        },
+        {
+          "key": "last_lesson_end",
+          "type": "string",
+          "label": {
+            "en": "Last lesson end",
+            "fr": "Fin du dernier cours",
+            "de": "Ende der letzten Stunde",
+            "es": "Fin de la última clase"
+          }
+        },
+        {
+          "key": "canceled_subjects",
+          "type": "string",
+          "label": {
+            "en": "Canceled subjects",
+            "fr": "Matières annulées",
+            "de": "Ausfallende Fächer",
+            "es": "Asignaturas canceladas"
+          }
+        },
+        {
+          "key": "homework",
+          "type": "number",
+          "label": {
+            "en": "Homework to do",
+            "fr": "Devoirs à faire",
+            "de": "Offene Hausaufgaben",
+            "es": "Deberes pendientes"
+          }
+        },
+        {
+          "key": "homework_text",
+          "type": "string",
+          "label": {
+            "en": "Homework list",
+            "fr": "Liste des devoirs",
+            "de": "Hausaufgabenliste",
+            "es": "Lista de deberes"
+          }
+        }
+      ]
+    }
+  ],
+  "widgets": [
+    {
+      "key": "student",
+      "label": {
+        "en": "PRONOTE student",
+        "fr": "Élève PRONOTE",
+        "de": "PRONOTE-Schüler",
+        "es": "Alumno PRONOTE"
+      },
+      "description": {
+        "en": "Average, homework, absences, next lesson and last grade of a student.",
+        "fr": "Moyenne, devoirs, absences, prochain cours et dernière note d'un élève.",
+        "de": "Durchschnitt, Hausaufgaben, Fehlzeiten, nächste Stunde und letzte Note.",
+        "es": "Media, deberes, ausencias, próxima clase y última nota de un alumno."
+      },
+      "icon": "book-open",
+      "settings": [
+        {
+          "key": "student",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Student",
+            "fr": "Élève",
+            "de": "Schüler",
+            "es": "Alumno"
+          },
+          "description": {
+            "en": "Empty: the first student of the account.",
+            "fr": "Vide : le premier élève du compte.",
+            "de": "Leer: der erste Schüler des Kontos.",
+            "es": "Vacío: el primer alumno de la cuenta."
+          },
+          "required": false
+        }
+      ],
+      "action_timeout_seconds": 90
+    },
+    {
+      "key": "timetable",
+      "label": {
+        "en": "PRONOTE timetable",
+        "fr": "Emploi du temps PRONOTE",
+        "de": "PRONOTE-Stundenplan",
+        "es": "Horario PRONOTE"
+      },
+      "description": {
+        "en": "The lessons of a day, with canceled lessons and tests.",
+        "fr": "Les cours d'une journée, avec les cours annulés et les contrôles.",
+        "de": "Die Stunden eines Tages, mit Ausfällen und Tests.",
+        "es": "Las clases de un día, con las clases canceladas y los exámenes."
+      },
+      "icon": "calendar",
+      "settings": [
+        {
+          "key": "student",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Student",
+            "fr": "Élève",
+            "de": "Schüler",
+            "es": "Alumno"
+          },
+          "description": {
+            "en": "Empty: the first student of the account.",
+            "fr": "Vide : le premier élève du compte.",
+            "de": "Leer: der erste Schüler des Kontos.",
+            "es": "Vacío: el primer alumno de la cuenta."
+          },
+          "required": false
+        },
+        {
+          "key": "day",
+          "type": "select",
+          "label": {
+            "en": "Day",
+            "fr": "Jour",
+            "de": "Tag",
+            "es": "Día"
+          },
+          "required": false,
+          "default": "next_school_day",
+          "options": [
+            {
+              "value": "today",
+              "label": {
+                "en": "Today",
+                "fr": "Aujourd'hui",
+                "de": "Heute",
+                "es": "Hoy"
+              }
+            },
+            {
+              "value": "tomorrow",
+              "label": {
+                "en": "Tomorrow",
+                "fr": "Demain",
+                "de": "Morgen",
+                "es": "Mañana"
+              }
+            },
+            {
+              "value": "next_school_day",
+              "label": {
+                "en": "Next school day",
+                "fr": "Prochain jour de cours",
+                "de": "Nächster Schultag",
+                "es": "Próximo día de clase"
+              }
+            }
+          ]
+        }
+      ],
+      "action_timeout_seconds": 90
+    }
+  ]
+}
