@@ -6,6 +6,8 @@ All notable changes to this integration are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.0.1] - 2026-10-14
+
 ### Added
 
 - PRONOTE integration for Gladys Assistant: one device per student (overall average, homework to do, homework for the next school day, absences, delays, next lesson, start of the next school day, last grade) and one device for the account (unread messages).
@@ -17,4 +19,5 @@ All notable changes to this integration are documented here. The format follows
 - Configuration buttons: test the connection, log in with a QR code, forget the saved session.
 - Texts in English, French, German and Spanish (configuration screen, messages, widgets, documentation).
 
-[Unreleased]: https://github.com/prohand/gladys-pronote/commits/main
+[Unreleased]: https://github.com/prohand/gladys-pronote/compare/v0.0.1...HEAD
+[0.0.1]: https://github.com/prohand/gladys-pronote/releases/tag/v0.0.1

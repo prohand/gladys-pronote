@@ -8,8 +8,8 @@
     "de": "Noten, Hausaufgaben, Stundenplan und Fehlzeiten aus PRONOTE, mit Szenenauslösern und Widgets.",
     "es": "Notas, deberes, horario y ausencias de PRONOTE, con disparadores de escenas y widgets."
   },
-  "version": "0.0.0",
-  "docker_image": "ghcr.io/prohand/gladys-pronote:0.0.0",
+  "version": "0.0.1",
+  "docker_image": "ghcr.io/prohand/gladys-pronote:0.0.1",
   "gladys_version": ">=5.1.0",
   "cover_image": "https://raw.githubusercontent.com/prohand/gladys-pronote/main/cover.png",
   "categories": ["services", "notifications"],
