@@ -6,6 +6,8 @@ All notable changes to this integration are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.0.5] - 2026-10-19
+
 ### Fixed
 
 - A failed "Test the connection" or QR code login was shown in green under the button, like a success. It is now shown in red, still in the reader's language.
@@ -41,7 +43,8 @@ All notable changes to this integration are documented here. The format follows
 - Configuration buttons: test the connection, log in with a QR code, forget the saved session.
 - Texts in English, French, German and Spanish (configuration screen, messages, widgets, documentation).
 
-[Unreleased]: https://github.com/prohand/gladys-pronote/compare/v0.0.4...HEAD
+[Unreleased]: https://github.com/prohand/gladys-pronote/compare/v0.0.5...HEAD
+[0.0.5]: https://github.com/prohand/gladys-pronote/compare/v0.0.4...v0.0.5
 [0.0.4]: https://github.com/prohand/gladys-pronote/compare/v0.0.3...v0.0.4
 [0.0.3]: https://github.com/prohand/gladys-pronote/compare/v0.0.2...v0.0.3
 [0.0.2]: https://github.com/prohand/gladys-pronote/compare/v0.0.1...v0.0.2
