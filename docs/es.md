@@ -128,12 +128,12 @@ Ambos muestran la última lectura: abrir un panel nunca consulta PRONOTE.
 
 ## Solución de problemas
 
-| Mensaje                                    | Qué hacer                                                                                                             |
-| ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------- |
-| PRONOTE rechazó el usuario o la contraseña | Compruébelos en la web de PRONOTE. La lectura se pausa hasta que guarde la configuración o pruebe la conexión.        |
-| PRONOTE pide configurar la seguridad       | Inicie sesión una vez en la app o la web de PRONOTE para terminarla (nueva contraseña, PIN) y luego use el código QR. |
-| La dirección IP fue suspendida             | Demasiados intentos fallidos: espere (normalmente una hora) antes de volver a intentarlo.                             |
-| El servidor no responde                    | Compruebe la dirección. Un servidor ocupado se vuelve a intentar en la siguiente lectura.                             |
+| Mensaje                                    | Qué hacer                                                                                                                                                                        |
+| ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| PRONOTE rechazó el usuario o la contraseña | Compruébelos en la web de PRONOTE. La lectura se pausa hasta que guarde la configuración o pruebe la conexión.                                                                   |
+| PRONOTE pide configurar la seguridad       | Inicie sesión una vez en la app o la web de PRONOTE para terminarla (nueva contraseña, PIN) y luego use el código QR.                                                            |
+| La dirección IP fue suspendida             | Demasiados intentos fallidos o solicitudes: la próxima lectura espera una hora, y el botón Actualizar y la acción de escena también. No use «Probar la conexión» hasta entonces. |
+| El servidor no responde                    | Compruebe la dirección. Un servidor ocupado se vuelve a intentar en la siguiente lectura.                                                                                        |
 
 Active **Registros detallados** para ver cada paso en los registros de la
 integración. Las contraseñas y los tokens nunca se registran.

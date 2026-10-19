@@ -6,6 +6,10 @@ All notable changes to this integration are documented here. The format follows
 
 ## [Unreleased]
 
+### Fixed
+
+- "Average unavailable, homework unavailable, lessons unavailable" while the integration still said it was connected, when PRONOTE had suspended the IP address: every tab failed on its own and the read went on, sending PRONOTE more requests. A suspended IP address (or a "slow down") now stops the read at once, shows the reason in the connection status and the widgets, and the next read waits one hour. Until then the widget Refresh button and the "read now" scene action answer without calling PRONOTE, so they do not extend the suspension.
+
 ## [0.0.3] - 2026-10-19
 
 ### Fixed

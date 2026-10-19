@@ -134,12 +134,12 @@ jamais PRONOTE.
 
 ## Dépannage
 
-| Message                                           | Que faire                                                                                                                             |
-| ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| PRONOTE a refusé l'identifiant ou le mot de passe | Vérifiez-les sur le site PRONOTE. La lecture est suspendue jusqu'à l'enregistrement de la configuration ou un test.                   |
-| PRONOTE demande de configurer la sécurité         | Connectez-vous une fois dans l'application ou le site PRONOTE pour la terminer (nouveau mot de passe, PIN), puis utilisez le QR code. |
-| L'adresse IP a été suspendue                      | Trop d'échecs de connexion : patientez (en général une heure) avant de réessayer.                                                     |
-| Le serveur est injoignable                        | Vérifiez l'adresse. Un serveur occupé est réessayé à la lecture suivante.                                                             |
+| Message                                           | Que faire                                                                                                                                                                            |
+| ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| PRONOTE a refusé l'identifiant ou le mot de passe | Vérifiez-les sur le site PRONOTE. La lecture est suspendue jusqu'à l'enregistrement de la configuration ou un test.                                                                  |
+| PRONOTE demande de configurer la sécurité         | Connectez-vous une fois dans l'application ou le site PRONOTE pour la terminer (nouveau mot de passe, PIN), puis utilisez le QR code.                                                |
+| L'adresse IP a été suspendue                      | Trop d'échecs de connexion ou de requêtes : la prochaine lecture attend une heure, le bouton Actualiser et l'action de scène aussi. N'utilisez pas « Tester la connexion » d'ici là. |
+| Le serveur est injoignable                        | Vérifiez l'adresse. Un serveur occupé est réessayé à la lecture suivante.                                                                                                            |
 
 Activez **Journaux détaillés** pour voir chaque étape dans les journaux de
 l'intégration. Les mots de passe et jetons ne sont jamais journalisés.

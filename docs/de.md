@@ -126,12 +126,12 @@ Beide zeigen den letzten Abruf: Das Öffnen eines Dashboards fragt PRONOTE nie a
 
 ## Fehlerbehebung
 
-| Meldung                                              | Was tun                                                                                                                        |
-| ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| PRONOTE hat Benutzername oder Passwort abgelehnt     | Prüfe sie auf der PRONOTE-Website. Der Abruf pausiert, bis du die Konfiguration speicherst oder die Verbindung testest.        |
-| PRONOTE verlangt die Einrichtung der Kontosicherheit | Melde dich einmal in der PRONOTE-App oder -Website an, um sie abzuschließen (neues Passwort, PIN), und nutze dann den QR-Code. |
-| Die IP-Adresse wurde gesperrt                        | Zu viele fehlgeschlagene Anmeldungen: Warte (meist eine Stunde), bevor du es erneut versuchst.                                 |
-| Der Server ist nicht erreichbar                      | Prüfe die Adresse. Ein ausgelasteter Server wird beim nächsten Abruf erneut versucht.                                          |
+| Meldung                                              | Was tun                                                                                                                                                                                             |
+| ---------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| PRONOTE hat Benutzername oder Passwort abgelehnt     | Prüfe sie auf der PRONOTE-Website. Der Abruf pausiert, bis du die Konfiguration speicherst oder die Verbindung testest.                                                                             |
+| PRONOTE verlangt die Einrichtung der Kontosicherheit | Melde dich einmal in der PRONOTE-App oder -Website an, um sie abzuschließen (neues Passwort, PIN), und nutze dann den QR-Code.                                                                      |
+| Die IP-Adresse wurde gesperrt                        | Zu viele fehlgeschlagene Anmeldungen oder Anfragen: Der nächste Abruf wartet eine Stunde, die Schaltfläche Aktualisieren und die Szenenaktion ebenfalls. Nutze bis dahin nicht „Verbindung testen“. |
+| Der Server ist nicht erreichbar                      | Prüfe die Adresse. Ein ausgelasteter Server wird beim nächsten Abruf erneut versucht.                                                                                                               |
 
 Schalte **Detaillierte Protokolle** ein, um jeden Schritt in den Protokollen der
 Integration zu sehen. Passwörter und Tokens werden nie protokolliert.

@@ -20,6 +20,12 @@
 // asked — stops the timer: retrying a refused password every few minutes is
 // how PRONOTE suspends the IP address of the whole house. Saving the
 // configuration, "Test the connection" or a QR code login start it again.
+//
+// When PRONOTE suspended the IP address or asked to slow down, the next read
+// waits an hour, and the widget button and the "read now" scene action answer
+// with the last error instead of calling PRONOTE: every request made during a
+// suspension can extend it. Only the explicit buttons of the Configuration
+// screen (through `restart`) try before the hour is over.
 // -----------------------------------------------------------------------------
 
 import { DEVICE_TRANSPORTS, createLogger } from '@gladysassistant/integration-sdk';
@@ -38,8 +44,9 @@ export const SEEN_FILE = 'seen.json';
 /** An unchanged value is still sent every hour, so it stays recently dated. */
 const STATE_HEARTBEAT_MS = 60 * 60 * 1000;
 
-/** The pause after PRONOTE asked to slow down. */
+/** The pause after PRONOTE asked to slow down or suspended the IP address. */
 const SLOW_DOWN_MS = 60 * 60 * 1000;
+const SLOW_DOWN_CODES = [ERROR_CODES.RATE_LIMITED, ERROR_CODES.SUSPENDED_IP];
 
 export class PronoteSync {
   /**
@@ -59,6 +66,7 @@ export class PronoteSync {
     this.timer = null;
     this.active = false;
     this.running = null;
+    this.holdUntil = 0;
     this.publishedDevices = '';
   }
 
@@ -70,7 +78,7 @@ export class PronoteSync {
   async restart() {
     this.stop();
     this.active = true;
-    const result = await this.sync();
+    const result = await this.sync({ force: true });
     this.schedule(result);
     return result;
   }
@@ -94,12 +102,12 @@ export class PronoteSync {
       return;
     }
     const interval = this.config.refresh_interval * 60 * 1000;
-    const slowDown = [ERROR_CODES.RATE_LIMITED, ERROR_CODES.SUSPENDED_IP].includes(error?.code);
+    const slowDown = SLOW_DOWN_CODES.includes(error?.code);
     this.timer = setTimeout(
       async () => {
         let next;
         try {
-          next = await this.sync();
+          next = await this.sync({ force: true });
         } catch (err) {
           // Never an unhandled rejection: it would stop the container.
           logger.error('PRONOTE read loop failed', err);
@@ -114,11 +122,16 @@ export class PronoteSync {
   /**
    * One read and its publications. Two calls at once share the same read.
    *
-   * @param {{ fireEvents?: boolean }} [options] `fireEvents: false` publishes the
-   *   states but leaves the news to the next read (scene actions)
+   * @param {{ fireEvents?: boolean, force?: boolean }} [options] `fireEvents:
+   *   false` publishes the states but leaves the news to the next read (scene
+   *   actions); `force` reads even while PRONOTE asked to wait (the timer and
+   *   the Configuration screen buttons)
    * @returns {Promise<{ ok: boolean, snapshot: object|null, error?: object, events?: number }>}
    */
-  async sync({ fireEvents = true } = {}) {
+  async sync({ fireEvents = true, force = false } = {}) {
+    if (!force && !this.running && this.now().getTime() < this.holdUntil) {
+      return { ok: false, snapshot: this.snapshot, error: this.lastError };
+    }
     this.running ??= this.run(fireEvents).finally(() => {
       this.running = null;
     });
@@ -132,6 +145,9 @@ export class PronoteSync {
     } catch (err) {
       const error = describeError(err);
       this.lastError = error;
+      this.holdUntil = SLOW_DOWN_CODES.includes(error.code)
+        ? this.now().getTime() + SLOW_DOWN_MS
+        : 0;
       logger.error(`PRONOTE read failed (${error.code}): ${err.name}: ${err.message}`);
       await this.publishTransports(DEVICE_TRANSPORTS.UNREACHABLE);
       await this.gladys.setConnectionStatus(false, error.message).catch(() => {});
@@ -141,6 +157,7 @@ export class PronoteSync {
 
     this.snapshot = snapshot;
     this.lastError = null;
+    this.holdUntil = 0;
     this.lastSuccess = snapshot.read_at;
     logger.info(
       `PRONOTE read: ${snapshot.students.map((student) => student.name).join(', ') || 'no student'}`,
