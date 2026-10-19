@@ -27,6 +27,7 @@ import { createLogger } from '@gladysassistant/integration-sdk';
 import { ACCOUNT_KINDS, hasCredentials } from '../config.js';
 import { readJson, removeJson, writeJson } from '../storage.js';
 import { NotConfiguredError, describeError, ERROR_CODES, isSessionLost } from './errors.js';
+import { createPronoteFetcher } from './fetcher.js';
 
 const logger = createLogger({ name: 'session' });
 
@@ -82,9 +83,11 @@ export class PronoteSession {
   /**
    * @param {object} [options]
    * @param {object} [options.api] the pawnote module (a fake one in the tests)
+   * @param {Function} [options.fetcher] the HTTP client handed to pawnote
    */
-  constructor({ api = pawnote } = {}) {
+  constructor({ api = pawnote, fetcher = createPronoteFetcher() } = {}) {
     this.api = api;
+    this.fetcher = fetcher;
     this.config = null;
     this.handle = null;
     this.pending = null;
@@ -187,7 +190,7 @@ export class PronoteSession {
     const content = parseQrContent(qr);
     const saved = (await readJson(SESSION_FILE)) ?? {};
     const deviceUUID = saved.deviceUUID ?? randomUUID();
-    const handle = this.api.createSessionHandle();
+    const handle = this.api.createSessionHandle(this.fetcher);
     const refresh = await this.api.loginQrCode(handle, {
       deviceUUID,
       pin: String(pin ?? '').trim(),
@@ -208,7 +211,7 @@ export class PronoteSession {
 
     if (saved.token && this.matches(saved)) {
       try {
-        const handle = this.api.createSessionHandle();
+        const handle = this.api.createSessionHandle(this.fetcher);
         const refresh = await this.api.loginToken(handle, {
           url: saved.url,
           kind: saved.kind,
@@ -238,7 +241,7 @@ export class PronoteSession {
     if (!hasCredentials(config)) {
       throw new NotConfiguredError();
     }
-    const handle = this.api.createSessionHandle();
+    const handle = this.api.createSessionHandle(this.fetcher);
     const refresh = await this.api.loginCredentials(handle, {
       url: instanceBase(config.url),
       kind: PRONOTE_KINDS[config.account_kind],

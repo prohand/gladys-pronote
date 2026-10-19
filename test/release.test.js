@@ -32,5 +32,13 @@ test('the next release compares with the previous tag', () => {
 test('the repository changelog has an Unreleased section and its link', async () => {
   const text = await readFile(new URL('../CHANGELOG.md', import.meta.url), 'utf8');
   assert.match(text, /^## \[Unreleased\]$/m);
-  assert.match(text, new RegExp(`^\\[Unreleased\\]: ${REPO}/commits/main$`, 'm'));
+  // Before the first release the link points at the commits page; after a
+  // release the roll (see rollChangelog) makes it compare the last tag to HEAD.
+  assert.match(
+    text,
+    new RegExp(
+      `^\\[Unreleased\\]: ${REPO}/(?:commits/main|compare/v\\d+\\.\\d+\\.\\d+\\.\\.\\.HEAD)$`,
+      'm',
+    ),
+  );
 });

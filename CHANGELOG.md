@@ -6,6 +6,10 @@ All notable changes to this integration are documented here. The format follows
 
 ## [Unreleased]
 
+### Fixed
+
+- Login failing with "The PRONOTE server cannot be reached or is busy" on PRONOTE 2026.2 servers: the instance page now starts its script with `Start (…);} catch`, which the bundled pawnote could not parse. The integration cleans that page before pawnote reads it, so password and QR-code logins work again.
+
 ## [0.0.1] - 2026-10-14
 
 ### Added
