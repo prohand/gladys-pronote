@@ -6,6 +6,8 @@ All notable changes to this integration are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.0.3] - 2026-10-19
+
 ### Fixed
 
 - Login refused with "PRONOTE refused the username or password" (and "PRONOTE refused the QR code") on PRONOTE 2026.2 servers, even with the right password: PRONOTE 2026.2 changed how the client answers the login challenge, and the bundled pawnote still answered the old way. The integration now patches pawnote at install time to answer the new way on 2026.2 servers; older servers keep the old answer.
@@ -29,6 +31,7 @@ All notable changes to this integration are documented here. The format follows
 - Configuration buttons: test the connection, log in with a QR code, forget the saved session.
 - Texts in English, French, German and Spanish (configuration screen, messages, widgets, documentation).
 
-[Unreleased]: https://github.com/prohand/gladys-pronote/compare/v0.0.2...HEAD
+[Unreleased]: https://github.com/prohand/gladys-pronote/compare/v0.0.3...HEAD
+[0.0.3]: https://github.com/prohand/gladys-pronote/compare/v0.0.2...v0.0.3
 [0.0.2]: https://github.com/prohand/gladys-pronote/compare/v0.0.1...v0.0.2
 [0.0.1]: https://github.com/prohand/gladys-pronote/releases/tag/v0.0.1
