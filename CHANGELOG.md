@@ -6,6 +6,8 @@ All notable changes to this integration are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.0.2] - 2026-10-19
+
 ### Fixed
 
 - Login failing with "The PRONOTE server cannot be reached or is busy" on PRONOTE 2026.2 servers: the instance page now starts its script with `Start (…);} catch`, which the bundled pawnote could not parse. The integration cleans that page before pawnote reads it, so password and QR-code logins work again.
@@ -23,5 +25,6 @@ All notable changes to this integration are documented here. The format follows
 - Configuration buttons: test the connection, log in with a QR code, forget the saved session.
 - Texts in English, French, German and Spanish (configuration screen, messages, widgets, documentation).
 
-[Unreleased]: https://github.com/prohand/gladys-pronote/compare/v0.0.1...HEAD
+[Unreleased]: https://github.com/prohand/gladys-pronote/compare/v0.0.2...HEAD
+[0.0.2]: https://github.com/prohand/gladys-pronote/compare/v0.0.1...v0.0.2
 [0.0.1]: https://github.com/prohand/gladys-pronote/releases/tag/v0.0.1
