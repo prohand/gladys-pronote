@@ -51,6 +51,7 @@ src/pronote/derive.js        what the snapshot means "now": next lesson, next sc
 src/pronote/events.js        what is new since the last read (content keys) + event data
 src/pronote/errors.js        pawnote errors → code, retry or not, message in 4 languages
 src/pronote/format.js        dates (local), HTML → text, content keys
+src/pronote/fetcher.js       HTTP client handed to pawnote (fixes the 2026.2 instance page)
 src/devices/                 account device + one student device each, ids, states
 src/sync.js                  the read loop: read, publish devices/states/events/badge
 src/actions.js               Configuration screen buttons
@@ -58,6 +59,7 @@ src/capabilities/scenes.js   scene trigger keys + scene action handlers
 src/capabilities/widgets.js  dashboard widgets
 gladys-assistant-integration.json  manifest
 docs/{en,fr,de,es}.md        user documentation, re-hosted by Gladys
+scripts/patch-pawnote.js     postinstall: teaches pawnote the 2026.2 login challenge
 test/                        node --test, fake pawnote + the SDK's fake Gladys
 ```
 
@@ -84,6 +86,10 @@ test/                        node --test, fake pawnote + the SDK's fake Gladys
   it and its trigger is not compared.
 - **The container rootfs is read-only.** Write only under `/data`. Never log
   passwords, tokens or the QR code content.
+- **pawnote is patched at install** (`postinstall` → `scripts/patch-pawnote.js`):
+  PRONOTE 2026.2 changed the login challenge and pawnote 1.6.2 does not know it.
+  `npm install --ignore-scripts` leaves pawnote unpatched; `test/challenge.test.js`
+  then fails. The Dockerfile copies `scripts/` before `npm ci` for that reason.
 - **Parent accounts**: pawnote 1.6 sends the selected child only for the
   timetable; grades, homework and absences of a multi-child parent account follow
   what PRONOTE answers by default. Documented in the docs ("Known limits").

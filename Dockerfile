@@ -16,8 +16,10 @@ RUN apk add --no-cache dumb-init
 
 WORKDIR /app
 
-# Install the PROD dependencies first (better build cache).
+# Install the PROD dependencies first (better build cache). The postinstall
+# script patches pawnote for the PRONOTE 2026.2 login (scripts/patch-pawnote.js).
 COPY package.json package-lock.json* ./
+COPY scripts ./scripts
 RUN npm ci --omit=dev && npm cache clean --force
 
 # Then the integration code.

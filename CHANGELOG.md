@@ -6,6 +6,10 @@ All notable changes to this integration are documented here. The format follows
 
 ## [Unreleased]
 
+### Fixed
+
+- Login refused with "PRONOTE refused the username or password" (and "PRONOTE refused the QR code") on PRONOTE 2026.2 servers, even with the right password: PRONOTE 2026.2 changed how the client answers the login challenge, and the bundled pawnote still answered the old way. The integration now patches pawnote at install time to answer the new way on 2026.2 servers; older servers keep the old answer.
+
 ## [0.0.2] - 2026-10-19
 
 ### Fixed
