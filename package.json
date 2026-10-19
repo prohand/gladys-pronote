@@ -1,6 +1,6 @@
 {
   "name": "gladys-pronote",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "private": true,
   "description": "Gladys Assistant external integration for PRONOTE: grades, homework, timetable and school life.",
   "type": "module",

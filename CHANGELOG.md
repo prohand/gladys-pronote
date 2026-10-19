@@ -6,6 +6,8 @@ All notable changes to this integration are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.0.4] - 2026-10-19
+
 ### Fixed
 
 - "Average unavailable, homework unavailable, lessons unavailable" while the integration still said it was connected, when PRONOTE had suspended the IP address: every tab failed on its own and the read went on, sending PRONOTE more requests. A suspended IP address (or a "slow down") now stops the read at once, shows the reason in the connection status and the widgets, and the next read waits one hour. Until then the widget Refresh button and the "read now" scene action answer without calling PRONOTE, so they do not extend the suspension.
@@ -35,7 +37,8 @@ All notable changes to this integration are documented here. The format follows
 - Configuration buttons: test the connection, log in with a QR code, forget the saved session.
 - Texts in English, French, German and Spanish (configuration screen, messages, widgets, documentation).
 
-[Unreleased]: https://github.com/prohand/gladys-pronote/compare/v0.0.3...HEAD
+[Unreleased]: https://github.com/prohand/gladys-pronote/compare/v0.0.4...HEAD
+[0.0.4]: https://github.com/prohand/gladys-pronote/compare/v0.0.3...v0.0.4
 [0.0.3]: https://github.com/prohand/gladys-pronote/compare/v0.0.2...v0.0.3
 [0.0.2]: https://github.com/prohand/gladys-pronote/compare/v0.0.1...v0.0.2
 [0.0.1]: https://github.com/prohand/gladys-pronote/releases/tag/v0.0.1
