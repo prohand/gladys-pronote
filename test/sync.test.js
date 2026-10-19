@@ -147,6 +147,36 @@ test('a failure that can pass keeps the loop going', async () => {
   assert.notEqual(sync.timer, null);
 });
 
+test('a suspended IP address is a failed read, and nobody but the timer asks again', async () => {
+  const { gladys, sync, api, clock } = await integration();
+  await sync.sync();
+  api.failures.assignmentsFromIntervals = 'SuspendedIPError';
+
+  const result = await sync.sync();
+  assert.equal(result.ok, false);
+  assert.equal(result.error.code, 'suspended_ip');
+  assert.equal(gladys.fake.connectionStatus.connected, false);
+  assert.match(gladys.fake.connectionStatus.message.fr, /suspendu/);
+  assert.equal(sync.snapshot.students.length, 2, 'the last snapshot stays');
+
+  // The widget button and the scene action do not call PRONOTE again.
+  const calls = api.calls.length;
+  const again = await sync.sync({ fireEvents: false });
+  assert.equal(again.ok, false);
+  assert.equal(again.error.code, 'suspended_ip');
+  assert.equal(api.calls.length, calls);
+
+  // The Configuration screen buttons still try.
+  const forced = await sync.restart();
+  assert.equal(forced.error.code, 'suspended_ip');
+  assert.ok(api.calls.length > calls);
+
+  // An hour later, a refresh reads again.
+  delete api.failures.assignmentsFromIntervals;
+  clock.now = new Date(clock.now.getTime() + 61 * 60 * 1000);
+  assert.equal((await sync.sync({ fireEvents: false })).ok, true);
+});
+
 test('two reads at once are one read', async () => {
   const { sync, api } = await integration();
   await Promise.all([sync.sync(), sync.sync()]);

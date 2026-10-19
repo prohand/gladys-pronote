@@ -10,14 +10,16 @@
 //
 // A part PRONOTE does not offer (a tab the school disabled) or fails to give
 // is `null`: its features are not published this time and its scene trigger is
-// not compared, rather than read as "everything was deleted". An expired
-// session is not swallowed: it goes up to `PronoteSession.run`, which logs in
-// again and starts the read over.
+// not compared, rather than read as "everything was deleted". An error about
+// the whole connection is not swallowed: an expired session goes up to
+// `PronoteSession.run`, which logs in again and starts the read over; a
+// suspended IP address or a "slow down" stops the read at once and goes up to
+// the read loop, which waits.
 // -----------------------------------------------------------------------------
 
 import { createLogger } from '@gladysassistant/integration-sdk';
 import { addDays, contentKey, formatPoints, iso, startOfDay, stripHtml } from './format.js';
-import { isSessionLost } from './errors.js';
+import { stopsTheRead } from './errors.js';
 
 const logger = createLogger({ name: 'read' });
 
@@ -156,13 +158,13 @@ export function toNotebook(notebook) {
 
 /**
  * Run one part of the read: `null` when the part fails for a reason of its
- * own, the error itself when the whole session is gone.
+ * own, the error itself when the whole connection is at stake.
  */
 async function part(name, student, fn) {
   try {
     return await fn();
   } catch (err) {
-    if (isSessionLost(err)) {
+    if (stopsTheRead(err)) {
       throw err;
     }
     logger.warn(`Cannot read the ${name} of ${student}: ${err.name}: ${err.message}`);

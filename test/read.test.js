@@ -142,6 +142,17 @@ test('an expired session is not swallowed by a tab', async () => {
   await assert.rejects(readSnapshot(api, handle, NOW), { name: 'SessionExpiredError' });
 });
 
+test('a suspended IP address stops the read at the first tab', async () => {
+  const api = createFakePawnote({ students: [lea(), tom()] });
+  api.failures.gradesOverview = 'SuspendedIPError';
+  const handle = api.createSessionHandle();
+  await api.loginCredentials(handle, { url: 'u', kind: 6, username: 'x' });
+
+  await assert.rejects(readSnapshot(api, handle, NOW), { name: 'SuspendedIPError' });
+  assert.equal(api.calls.filter(([name]) => name === 'gradesOverview').length, 1);
+  assert.ok(!api.calls.some(([name]) => name === 'assignmentsFromIntervals'));
+});
+
 test('pawnoteError builds errors recognized by name', () => {
   assert.equal(pawnoteError('BusyPageError').name, 'BusyPageError');
 });

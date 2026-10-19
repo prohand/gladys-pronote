@@ -50,10 +50,10 @@ const MESSAGES = {
     es: 'Esta cuenta de PRONOTE está desactivada: contacte con el centro.',
   },
   [ERROR_CODES.SUSPENDED_IP]: {
-    en: 'PRONOTE suspended the IP address of your Gladys after too many failed logins. Wait before trying again.',
-    fr: 'PRONOTE a suspendu l’adresse IP de votre Gladys après trop d’échecs de connexion. Patientez avant de réessayer.',
-    de: 'PRONOTE hat die IP-Adresse deines Gladys nach zu vielen fehlgeschlagenen Anmeldungen gesperrt. Warte, bevor du es erneut versuchst.',
-    es: 'PRONOTE suspendió la dirección IP de su Gladys tras demasiados intentos fallidos. Espere antes de volver a intentarlo.',
+    en: 'PRONOTE temporarily suspended the IP address of your Gladys (too many failed logins or requests). The next read waits one hour; avoid refreshing until then.',
+    fr: 'PRONOTE a provisoirement suspendu l’adresse IP de votre Gladys (trop d’échecs de connexion ou de requêtes). La prochaine lecture attend une heure ; évitez d’actualiser d’ici là.',
+    de: 'PRONOTE hat die IP-Adresse deines Gladys vorübergehend gesperrt (zu viele fehlgeschlagene Anmeldungen oder Anfragen). Der nächste Abruf wartet eine Stunde; aktualisiere bis dahin nicht.',
+    es: 'PRONOTE suspendió temporalmente la dirección IP de su Gladys (demasiados intentos fallidos o solicitudes). La próxima lectura espera una hora; evite actualizar hasta entonces.',
   },
   [ERROR_CODES.RATE_LIMITED]: {
     en: 'PRONOTE asks to slow down: the next read will wait. Raise the refresh interval if it happens often.',
@@ -137,4 +137,19 @@ export function describeError(err) {
  */
 export function isSessionLost(err) {
   return err?.name === 'SessionExpiredError';
+}
+
+/** Errors about the whole connection, not about one tab. */
+const WHOLE_READ_ERRORS = ['SessionExpiredError', 'SuspendedIPError', 'RateLimitedError'];
+
+/**
+ * Whether the error stops the whole read rather than one part of it. A
+ * suspended IP address fails every request that follows: reading the other
+ * tabs anyway only sends PRONOTE more requests and reports a read that
+ * "worked" with nothing in it.
+ *
+ * @param {unknown} err
+ */
+export function stopsTheRead(err) {
+  return WHOLE_READ_ERRORS.includes(err?.name);
 }
