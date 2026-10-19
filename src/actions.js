@@ -8,7 +8,8 @@
 //     password change on another device).
 //
 // A successful test or QR login also restarts the read loop, which a refused
-// password had paused (see src/sync.js).
+// password had paused (see src/sync.js). A failure is thrown as an
+// `ActionError`, so Gladys shows it in red, not in green like a success.
 // -----------------------------------------------------------------------------
 
 import { createLogger } from '@gladysassistant/integration-sdk';
@@ -17,6 +18,23 @@ import { describeError } from './pronote/errors.js';
 import { formatPoints } from './pronote/format.js';
 
 const logger = createLogger({ name: 'actions' });
+
+/**
+ * A failed action, shown in red under the button in the reader's language.
+ *
+ * The SDK acks a thrown error as `{ success: false, error: err.message }` and
+ * the core hands that value to the screen untouched, which renders a
+ * multi-language object like a success message. `message` is set after
+ * `super()` so it stays the object: `Error` would turn it into a string.
+ */
+export class ActionError extends Error {
+  /** @param {Record<string, string>} message one text per language, `en` included */
+  constructor(message) {
+    super(message.en);
+    this.name = 'ActionError';
+    this.message = message;
+  }
+}
 
 /** Action keys, as declared in the manifest. Never rename. */
 export const ACTION_KEYS = {
@@ -117,9 +135,10 @@ export function actionHandlers(sync, session) {
     async [ACTION_KEYS.TEST_CONNECTION]() {
       logger.info('Action test_connection');
       const result = await sync.restart();
-      // A failure is answered, not thrown: the reason reads in the user's
-      // language under the button (a thrown error shows in English only).
-      return result.ok ? describeSnapshot(result.snapshot) : result.error.message;
+      if (!result.ok) {
+        throw new ActionError(result.error.message);
+      }
+      return describeSnapshot(result.snapshot);
     },
 
     async [ACTION_KEYS.LOGIN_QR_CODE](fields) {
@@ -128,14 +147,17 @@ export function actionHandlers(sync, session) {
         await session.loginWithQrCode({ qr: fields.qr_content, pin: fields.pin });
       } catch (err) {
         if (err.name === 'InvalidQrCodeError') {
-          return QR_INVALID;
+          throw new ActionError(QR_INVALID);
         }
         const error = describeError(err);
         logger.warn(`QR code login failed (${error.code}): ${err.name}: ${err.message}`);
-        return error.code === 'bad_credentials' ? QR_REFUSED : error.message;
+        throw new ActionError(error.code === 'bad_credentials' ? QR_REFUSED : error.message);
       }
       const result = await sync.restart();
-      return result.ok ? QR_DONE : result.error.message;
+      if (!result.ok) {
+        throw new ActionError(result.error.message);
+      }
+      return QR_DONE;
     },
 
     async [ACTION_KEYS.FORGET_SESSION]() {

@@ -6,6 +6,10 @@ All notable changes to this integration are documented here. The format follows
 
 ## [Unreleased]
 
+### Fixed
+
+- A failed "Test the connection" or QR code login was shown in green under the button, like a success. It is now shown in red, still in the reader's language.
+
 ## [0.0.4] - 2026-10-19
 
 ### Fixed

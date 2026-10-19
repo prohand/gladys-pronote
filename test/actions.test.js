@@ -38,7 +38,10 @@ test('test_connection says why it failed, and restarts a paused loop once fixed'
   current = await createIntegration();
   current.api.failures.loginCredentials = 'BadCredentialsError';
   const failed = await current.gladys.fake.action('test_connection', {});
-  assert.match(failed.data.message.fr, /refusé l’identifiant/);
+  // A failed ack, so Gladys shows it in red, still in every language.
+  assert.equal(failed.success, false);
+  assert.deepEqual(Object.keys(failed.error), LANGUAGES);
+  assert.match(failed.error.fr, /refusé l’identifiant/);
   assert.equal(current.sync.timer, null);
 
   delete current.api.failures.loginCredentials;
@@ -57,14 +60,16 @@ test('login_qr_code logs in, saves the session and reads', async () => {
 test('login_qr_code explains a wrong text and a refused code', async () => {
   current = await createIntegration({ config: {} });
   const wrong = await current.gladys.fake.action('login_qr_code', { qr_content: 'x', pin: '1' });
-  assert.match(wrong.data.message.en, /not the content of a PRONOTE QR code/);
+  assert.equal(wrong.success, false);
+  assert.match(wrong.error.en, /not the content of a PRONOTE QR code/);
 
   current.api.failures.loginQrCode = 'BadCredentialsError';
   const refused = await current.gladys.fake.action('login_qr_code', {
     qr_content: QR,
     pin: '0000',
   });
-  assert.match(refused.data.message.fr, /4 chiffres/);
+  assert.equal(refused.success, false);
+  assert.match(refused.error.fr, /4 chiffres/);
 });
 
 test('forget_session drops the token', async () => {
