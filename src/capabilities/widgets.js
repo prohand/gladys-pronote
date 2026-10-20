@@ -2,8 +2,10 @@
 // Dashboard widgets (Gladys 5.1+).
 //
 //   - `student`: one student at a glance — average, homework to do, absences,
-//     the next lesson, the last grade, the unread messages, and the homework
-//     list. A button reads PRONOTE now.
+//     the next lesson, the last grade, the unread messages, and one list: the
+//     homework (done or not), the last grades or the correspondence book, as
+//     the widget's `list` setting says (a widget shows one list at most: add
+//     the widget several times to see several). A button reads PRONOTE now.
 //   - `timetable`: the lessons of one day (today, tomorrow or the next school
 //     day), canceled lessons and tests flagged.
 //
@@ -19,11 +21,12 @@ import {
   DAYS,
   daySummary,
   gradeLine,
+  homeworkShown,
   lastGrade,
   lessonLine,
   nextLesson,
   nextSchoolDay,
-  pendingHomework,
+  recentGrades,
 } from '../pronote/derive.js';
 import { addDays, dayKey, formatPoints, timeOf, truncate } from '../pronote/format.js';
 import { localeOf, pick } from '../i18n.js';
@@ -32,6 +35,12 @@ const logger = createLogger({ name: 'widgets' });
 
 /** Widget keys, as declared in the manifest. Never rename. */
 export const WIDGET_KEYS = { STUDENT: 'student', TIMETABLE: 'timetable' };
+
+/** What the list of the `student` widget shows (its `list` setting). Never rename. */
+export const STUDENT_LISTS = { HOMEWORK: 'homework', GRADES: 'grades', NOTEBOOK: 'notebook' };
+
+/** A card-list holds 8 rows at most. */
+const LIST_SIZE = 8;
 
 /** Button action keys of the widget contents. */
 export const WIDGET_ACTIONS = { REFRESH: 'refresh' };
@@ -88,6 +97,28 @@ const T = {
     de: 'Keine Hausaufgaben.',
     es: 'No hay deberes.',
   },
+  done: { en: 'Done', fr: 'Fait', de: 'Erledigt', es: 'Hecho' },
+  notDone: { en: 'Not done', fr: 'Non fait', de: 'Offen', es: 'Pendiente' },
+  classAverage: { en: 'Class', fr: 'Classe', de: 'Klasse', es: 'Clase' },
+  coefficient: { en: 'Coefficient', fr: 'Coefficient', de: 'Gewichtung', es: 'Coeficiente' },
+  noGrade: {
+    en: 'No grade this period.',
+    fr: 'Aucune note sur la période.',
+    de: 'Keine Note in diesem Zeitraum.',
+    es: 'Ninguna nota en este periodo.',
+  },
+  noObservation: {
+    en: 'No note in the correspondence book.',
+    fr: 'Aucun mot dans le carnet de correspondance.',
+    de: 'Keine Notiz im Mitteilungsheft.',
+    es: 'Ninguna nota en la libreta de correspondencia.',
+  },
+  observationKinds: {
+    issue: { en: 'Book issue', fr: 'Défaut carnet', de: 'Heftmangel', es: 'Falta libreta' },
+    observation: { en: 'Observation', fr: 'Observation', de: 'Bemerkung', es: 'Observación' },
+    encouragement: { en: 'Praise', fr: 'Encouragement', de: 'Lob', es: 'Ánimo' },
+    other: { en: 'Note', fr: 'Mot', de: 'Notiz', es: 'Nota' },
+  },
   noLesson: {
     en: 'No lesson on this day.',
     fr: 'Pas de cours ce jour-là.',
@@ -95,10 +126,10 @@ const T = {
     es: 'No hay clases ese día.',
   },
   noSchoolDay: {
-    en: 'No school day in the coming week.',
-    fr: 'Pas de jour de cours dans la semaine à venir.',
-    de: 'Kein Schultag in der kommenden Woche.',
-    es: 'No hay día de clase en la próxima semana.',
+    en: 'No school day in the next three weeks.',
+    fr: 'Pas de jour de cours dans les trois semaines à venir.',
+    de: 'Kein Schultag in den nächsten drei Wochen.',
+    es: 'No hay día de clase en las próximas tres semanas.',
   },
   canceled: { en: 'Canceled', fr: 'Annulé', de: 'Entfällt', es: 'Cancelada' },
   test: { en: 'Test', fr: 'Contrôle', de: 'Test', es: 'Examen' },
@@ -143,6 +174,118 @@ function emptyContent(sync, language, text) {
   return { ttl_seconds: 60, components };
 }
 
+/** The color of a grade badge, from the mark brought back to /20. */
+function gradeColor(grade) {
+  if (grade.value_20 === null) {
+    return WIDGET_COLORS.NEUTRAL;
+  }
+  if (grade.value_20 >= 14) {
+    return WIDGET_COLORS.SUCCESS;
+  }
+  return grade.value_20 >= 10 ? WIDGET_COLORS.INFO : WIDGET_COLORS.WARNING;
+}
+
+const OBSERVATION_COLORS = {
+  issue: WIDGET_COLORS.WARNING,
+  observation: WIDGET_COLORS.INFO,
+  encouragement: WIDGET_COLORS.SUCCESS,
+  other: WIDGET_COLORS.NEUTRAL,
+};
+
+/**
+ * The homework list: done and not done, like PRONOTE's "homework for the next
+ * days". When it does not fit, what is done gives way first.
+ */
+function homeworkList(shown, now, language) {
+  if (!shown.length) {
+    return { type: 'text', variant: 'caption', text: T.noHomework };
+  }
+  const today = dayKey(now);
+  const tomorrow = dayKey(addDays(now, 1));
+  const rows = shown.length > LIST_SIZE ? shown.filter((item) => !item.done) : shown;
+  return {
+    type: 'card-list',
+    display: 'list',
+    items: (rows.length ? rows : shown).slice(0, LIST_SIZE).map((item) => {
+      const due = dayKey(item.due);
+      const badge = item.done
+        ? { text: pick(language, T.done), color: WIDGET_COLORS.SUCCESS }
+        : due === today
+          ? { text: pick(language, T.today), color: WIDGET_COLORS.DANGER }
+          : due === tomorrow
+            ? { text: pick(language, T.tomorrow), color: WIDGET_COLORS.WARNING }
+            : { text: pick(language, T.notDone), color: WIDGET_COLORS.NEUTRAL };
+      return {
+        title: truncate(item.subject, 60),
+        subtitle: `${pick(language, T.due)} ${dayLabel(due, language)}`,
+        badge,
+        description: truncate(item.description || '—', 2000),
+      };
+    }),
+  };
+}
+
+/** The last grades, the most recent first. */
+function gradesList(student, language) {
+  const grades = recentGrades(student, LIST_SIZE);
+  if (!grades.length) {
+    return { type: 'text', variant: 'caption', text: T.noGrade };
+  }
+  return {
+    type: 'card-list',
+    display: 'list',
+    items: grades.map((grade) => {
+      const details = [grade.date ? dayLabel(dayKey(grade.date), language) : null];
+      if (grade.class_average !== null) {
+        details.push(`${pick(language, T.classAverage)} ${formatPoints(grade.class_average)}`);
+      }
+      const description = [
+        grade.comment,
+        `${pick(language, T.coefficient)} ${formatPoints(grade.coefficient)}`,
+      ].filter(Boolean);
+      return {
+        title: truncate(grade.subject, 60),
+        subtitle: truncate(details.filter(Boolean).join(' · '), 60),
+        badge: { text: truncate(grade.label, 16), color: gradeColor(grade) },
+        description: truncate(description.join('\n'), 2000),
+      };
+    }),
+  };
+}
+
+/** The notes of the correspondence book, the most recent first. */
+function notebookList(student, language) {
+  const notes = student.observations.slice(0, LIST_SIZE);
+  if (!notes.length) {
+    return { type: 'text', variant: 'caption', text: T.noObservation };
+  }
+  return {
+    type: 'card-list',
+    display: 'list',
+    items: notes.map((note) => {
+      const kind = T.observationKinds[note.kind] ?? T.observationKinds.other;
+      const details = [note.date ? dayLabel(dayKey(note.date), language) : null, note.subject];
+      return {
+        title: truncate(note.title || pick(language, kind), 60),
+        subtitle: truncate(details.filter(Boolean).join(' · '), 60),
+        badge: { text: truncate(pick(language, kind), 16), color: OBSERVATION_COLORS[note.kind] },
+        description: truncate(note.comment || '—', 2000),
+      };
+    }),
+  };
+}
+
+/** The list the `student` widget shows, `null` when PRONOTE did not give it. */
+function studentList(student, which, shown, now, language) {
+  if (which === STUDENT_LISTS.GRADES) {
+    return student.grades ? gradesList(student, language) : null;
+  }
+  if (which === STUDENT_LISTS.NOTEBOOK) {
+    return student.observations ? notebookList(student, language) : null;
+  }
+  return student.homework ? homeworkList(shown, now, language) : null;
+}
+
 const REFRESH_BUTTON = {
   type: 'button',
   label: T.refresh,
@@ -162,10 +305,11 @@ export function studentContent(gladys, sync, { settings = {}, language = 'en' })
     return emptyContent(sync, language, T.noStudent);
   }
   const now = sync.now();
-  const limit = dayKey(addDays(now, sync.config?.homework_days ?? 7));
-  const todo = pendingHomework(student, now).filter((item) => dayKey(item.due) <= limit);
-  const today = dayKey(now);
-  const tomorrow = dayKey(addDays(now, 1));
+  const shown = homeworkShown(student, now, sync.config?.homework_days ?? 7);
+  const todo = shown.filter((item) => !item.done);
+  const which = Object.values(STUDENT_LISTS).includes(settings.list)
+    ? settings.list
+    : STUDENT_LISTS.HOMEWORK;
 
   const components = [{ type: 'text', variant: 'heading', text: truncate(student.name, 40) }];
   if (student.grades?.average !== null && student.grades?.average !== undefined) {
@@ -189,30 +333,9 @@ export function studentContent(gladys, sync, { settings = {}, language = 'en' })
     });
   }
 
-  if (student.homework) {
-    components.push(
-      todo.length
-        ? {
-            type: 'card-list',
-            display: 'list',
-            items: todo.slice(0, 8).map((item) => {
-              const due = dayKey(item.due);
-              const soon = due === today ? T.today : due === tomorrow ? T.tomorrow : null;
-              return {
-                title: truncate(item.subject, 60),
-                subtitle: `${pick(language, T.due)} ${dayLabel(due, language)}`,
-                ...(soon && {
-                  badge: {
-                    text: pick(language, soon),
-                    color: due === today ? WIDGET_COLORS.DANGER : WIDGET_COLORS.WARNING,
-                  },
-                }),
-                description: truncate(item.description || '—', 2000),
-              };
-            }),
-          }
-        : { type: 'text', variant: 'caption', text: T.noHomework },
-    );
+  const list = studentList(student, which, shown, now, language);
+  if (list) {
+    components.push(list);
   }
 
   const items = [];

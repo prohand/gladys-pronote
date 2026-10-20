@@ -194,12 +194,21 @@ export function createFakePawnote(data) {
     async assignmentsFromIntervals(handle, start, end) {
       calls.push(['assignmentsFromIntervals', handle.userResource.name, start, end]);
       fail('assignmentsFromIntervals');
-      return handle.userResource.homework ?? [];
+      // Like pawnote: only what is due in the interval.
+      return (handle.userResource.homework ?? []).filter(
+        (item) => start <= item.deadline && item.deadline <= end,
+      );
     },
     async timetableFromIntervals(handle, start, end) {
       calls.push(['timetableFromIntervals', handle.userResource.name, start, end]);
       fail('timetableFromIntervals');
-      return { classes: [...(handle.userResource.lessons ?? [])], withCanceledClasses: true };
+      // Like PRONOTE: the lessons of the days asked, the last one included.
+      const until = new Date(end);
+      until.setDate(until.getDate() + 1);
+      const classes = (handle.userResource.lessons ?? []).filter(
+        (entry) => start <= entry.startDate && entry.startDate < until,
+      );
+      return { classes, withCanceledClasses: true };
     },
     parseTimetable(_handle, timetable) {
       // The real one hides a canceled lesson whose slot another one took.

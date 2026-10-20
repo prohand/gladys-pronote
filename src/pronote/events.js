@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------
-// What is new since the last read: the grades, homework, canceled lessons and
-// absences that were not there before.
+// What is new since the last read: the grades, homework, canceled lessons,
+// absences and correspondence book notes that were not there before.
 //
 // PRONOTE has no notifications to subscribe to: the integration compares each
 // read with what it already saw, remembered by content key per student (see
@@ -35,6 +35,7 @@ export const KINDS = {
           ...student.delays.map((item) => ({ ...item, type: 'delay' })),
         ]
       : null,
+  observations: (student) => student.observations,
 };
 
 /**
@@ -97,5 +98,12 @@ export const EVENT_DATA = {
     justified: item.justified ? 'yes' : 'no',
     minutes: item.type === 'delay' ? item.minutes : null,
     reason: item.reason.slice(0, 1000),
+  }),
+  observations: (item) => ({
+    kind: item.kind,
+    title: item.title,
+    subject: item.subject,
+    comment: item.comment.slice(0, 1000),
+    date: item.date ? dayKey(item.date) : null,
   }),
 };

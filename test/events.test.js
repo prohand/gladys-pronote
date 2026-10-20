@@ -24,6 +24,40 @@ test('the first read only remembers', async () => {
   assert.equal(seen.homework.length, 3);
   assert.equal(seen.cancellations.length, 1);
   assert.equal(seen.absences.length, 2);
+  assert.equal(seen.observations.length, 2);
+});
+
+test('a new note in the correspondence book is news', async () => {
+  const { seen } = compareStudent(undefined, await lea(), NOW);
+  const next = await lea((resource) => {
+    resource.notebook.observations.push({
+      id: 'O3',
+      date: at(2026, 10, 14, 9),
+      opened: false,
+      name: 'Travail non fait',
+      kind: 1,
+      subject: { id: 'MATHS', name: 'MATHEMATIQUES' },
+      reason: 'Exercices non faits',
+    });
+  });
+  const { news } = compareStudent(seen, next, NOW);
+  assert.equal(news.observations.length, 1);
+  assert.deepEqual(EVENT_DATA.observations(news.observations[0]), {
+    kind: 'observation',
+    title: 'Travail non fait',
+    subject: 'MATHEMATIQUES',
+    comment: 'Exercices non faits',
+    date: '2026-10-14',
+  });
+});
+
+test('an older memory without the correspondence book only remembers it', async () => {
+  // seen.json written before the correspondence book was read.
+  const { seen } = compareStudent(undefined, await lea(), NOW);
+  delete seen.observations;
+  const result = compareStudent(seen, await lea(), NOW);
+  assert.equal(result.news.observations, undefined);
+  assert.equal(result.seen.observations.length, 2);
 });
 
 test('only what appeared since is new', async () => {

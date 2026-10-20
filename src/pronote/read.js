@@ -2,9 +2,9 @@
 // Read what Gladys shows from PRONOTE, into a plain snapshot.
 //
 // One read = one pass over every student of the account (a parent account has
-// one per child): grades of the current period, homework of the next weeks,
-// timetable of the next days, absences and delays, and the unread messages of
-// the account. The snapshot holds plain values only (strings, numbers, ISO
+// one per child): grades of the current period, homework and timetable of the
+// next weeks, absences, delays and the notes of the correspondence book
+// ("carnet de correspondance"), and the unread messages of the account. The snapshot holds plain values only (strings, numbers, ISO
 // dates): devices, scene triggers and widgets are all computed from it, and
 // the tests build one by hand.
 //
@@ -23,10 +23,18 @@ import { stopsTheRead } from './errors.js';
 
 const logger = createLogger({ name: 'read' });
 
-/** How far ahead the homework is read, whatever the display shows. */
-export const HOMEWORK_HORIZON_DAYS = 21;
-/** How far ahead the timetable is read: a full week, plus today. */
-export const TIMETABLE_HORIZON_DAYS = 8;
+/**
+ * How far ahead the timetable is read: three weeks plus today, so that the
+ * next school day is found across two weeks of holidays (Toussaint, Christmas,
+ * winter, spring). One request whatever the length.
+ */
+export const TIMETABLE_HORIZON_DAYS = 22;
+/**
+ * How far ahead the homework is read: the homework shown is counted from the
+ * next school day (src/pronote/derive.js), so the longest window is the
+ * timetable read plus the largest homework horizon (21 days).
+ */
+export const HOMEWORK_HORIZON_DAYS = TIMETABLE_HORIZON_DAYS + 21;
 
 /** PRONOTE's tab numbers (pawnote TabLocation). */
 const TABS = { GRADES: 198, NOTEBOOK: 19 };
@@ -44,6 +52,14 @@ const GRADE_KIND_LABELS = {
 };
 /** Kinds that count as a zero in the average. */
 const ZERO_KINDS = [6, 7];
+
+/** PRONOTE's kinds of correspondence book notes (pawnote NotebookObservationKind). */
+export const OBSERVATION_KINDS = {
+  0: 'issue',
+  1: 'observation',
+  2: 'encouragement',
+  3: 'other',
+};
 
 /**
  * The period to read: the one PRONOTE opens by default when it covers today,
@@ -136,7 +152,21 @@ export function toLesson(entry) {
   };
 }
 
-/** The absences and delays of a notebook, plain. */
+/** One note of the correspondence book, plain: a teacher's word to the family. */
+export function toObservation(observation) {
+  const comment = stripHtml(observation.reason);
+  return {
+    key: contentKey('observation', iso(observation.date), observation.name, comment),
+    date: iso(observation.date),
+    title: observation.name ?? '',
+    kind: OBSERVATION_KINDS[observation.kind] ?? 'other',
+    subject: observation.subject?.name ?? '',
+    comment,
+    read: Boolean(observation.opened),
+  };
+}
+
+/** The absences, delays and correspondence book notes of a notebook, plain. */
 export function toNotebook(notebook) {
   return {
     absences: (notebook.absences ?? []).map((absence) => ({
@@ -153,6 +183,9 @@ export function toNotebook(notebook) {
       justified: Boolean(delay.justified),
       reason: delay.reason ?? '',
     })),
+    observations: (notebook.observations ?? [])
+      .map(toObservation)
+      .sort((a, b) => (b.date ?? '').localeCompare(a.date ?? '')),
   };
 }
 
@@ -236,6 +269,7 @@ async function readStudent(api, handle, resource, now) {
     lessons,
     absences: notebook?.absences ?? null,
     delays: notebook?.delays ?? null,
+    observations: notebook?.observations ?? null,
   };
 }
 
