@@ -4,7 +4,7 @@
 // states, the widgets and the scene actions so they never disagree.
 // -----------------------------------------------------------------------------
 
-import { dayKey, shortDate, startOfDay, timeOf } from './format.js';
+import { addDays, dayKey, shortDate, startOfDay, timeOf } from './format.js';
 
 /** The days a scene action or a widget can ask about. */
 export const DAYS = { TODAY: 'today', TOMORROW: 'tomorrow', NEXT_SCHOOL_DAY: 'next_school_day' };
@@ -63,6 +63,29 @@ export function pendingHomework(student, now) {
   return (student.homework ?? []).filter((item) => !item.done && dayKey(item.due) >= today);
 }
 
+/**
+ * The last day (`YYYY-MM-DD`) of the homework shown: `days` days counted from
+ * the next school day. On a school week that is `days` days from today; during
+ * the holidays the window starts at the return, as PRONOTE's "homework for the
+ * next days" does, rather than showing nothing until the last week.
+ */
+export function homeworkUntil(student, now, days) {
+  const tomorrow = dayKey(addDays(now, 1));
+  const next = nextSchoolDay(student, now);
+  const first = next && next > tomorrow ? next : tomorrow;
+  return dayKey(addDays(new Date(`${first}T12:00:00`), days - 1));
+}
+
+/** The homework due from today to the end of the window, done or not. */
+export function homeworkShown(student, now, days) {
+  const today = dayKey(now);
+  const until = homeworkUntil(student, now, days);
+  return (student.homework ?? []).filter((item) => {
+    const due = dayKey(item.due);
+    return due >= today && due <= until;
+  });
+}
+
 /** Homework due on one day (`YYYY-MM-DD`). */
 export function homeworkOn(student, day) {
   return (student.homework ?? []).filter((item) => dayKey(item.due) === day);
@@ -75,6 +98,13 @@ export function lastGrade(student) {
     (latest, grade) => (!latest || grade.date > latest.date ? grade : latest),
     null,
   );
+}
+
+/** The most recent grades first, at most `count`. */
+export function recentGrades(student, count) {
+  return [...(student.grades?.list ?? [])]
+    .sort((a, b) => (b.date ?? '').localeCompare(a.date ?? ''))
+    .slice(0, count);
 }
 
 /** How a grade reads on one line: `Mathématiques 15/20 (14/10)`. */

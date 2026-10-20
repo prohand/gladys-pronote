@@ -1,7 +1,7 @@
 // -----------------------------------------------------------------------------
 // One school week, as PRONOTE would give it, seen on Wednesday 14 October 2026
 // at 10:00 (local time): a student with grades, homework, lessons — one of them
-// canceled — an absence and a delay.
+// canceled — an absence, a delay and two notes in the correspondence book.
 // -----------------------------------------------------------------------------
 
 import { at, grade, homework, lesson, studentResource } from './fakePawnote.js';
@@ -47,7 +47,29 @@ export function lea() {
       ],
       delays: [{ id: 'D1', date: at(2026, 10, 6, 8), minutes: 10, justified: false }],
       punishments: [],
-      observations: [],
+      observations: [
+        {
+          id: 'O1',
+          date: at(2026, 10, 2, 9),
+          opened: true,
+          shouldParentsJustify: false,
+          name: 'Oubli de matériel',
+          kind: 0,
+          sectionID: 'R1',
+          subject: { id: 'SVT', name: 'SVT', inGroups: false },
+          reason: 'Pas de blouse',
+        },
+        {
+          id: 'O2',
+          date: at(2026, 10, 9, 15),
+          opened: false,
+          shouldParentsJustify: false,
+          name: 'Encouragements',
+          kind: 2,
+          sectionID: 'R2',
+          reason: 'Très bonne participation',
+        },
+      ],
       precautionaryMeasures: [],
     },
   });

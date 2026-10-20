@@ -1,8 +1,8 @@
 # PRONOTE for Gladys
 
 This integration brings **PRONOTE**, the school life software used by most French
-schools, into Gladys: grades, homework, timetable, absences and unread messages of
-a student — or of every child of a parent account.
+schools, into Gladys: grades, homework, timetable, absences, correspondence book and unread
+messages of a student — or of every child of a parent account.
 
 It reads PRONOTE the way the PRONOTE app does, every few minutes, and publishes
 what it finds as Gladys devices, scene triggers and dashboard widgets.
@@ -22,15 +22,15 @@ what it finds as Gladys devices, scene triggers and dashboard widgets.
 
 In Gladys, open **Integrations → PRONOTE → Configuration**.
 
-| Field                   | What to put                                                                                            |
-| ----------------------- | ------------------------------------------------------------------------------------------------------ |
-| PRONOTE address         | The address of the PRONOTE space. The end (`eleve.html`, `parent.html`) is not needed.                 |
-| Kind of account         | **Student** for a student account, **Parent** for a parent account (one device per child).             |
-| Username / Password     | Your PRONOTE username and password.                                                                    |
-| Refresh interval (min)  | How often PRONOTE is read. 15 minutes is plenty; the server is shared by the whole school.             |
-| Homework horizon        | How many days ahead the homework to do is counted and listed (7 by default).                           |
-| Time zone of the school | `Europe/Paris` by default. Overseas schools: `Indian/Reunion`, `America/Martinique`, `Pacific/Noumea`… |
-| Detailed logs           | Turn on to understand a problem, then off again.                                                       |
+| Field                   | What to put                                                                                                                                     |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| PRONOTE address         | The address of the PRONOTE space. The end (`eleve.html`, `parent.html`) is not needed.                                                          |
+| Kind of account         | **Student** for a student account, **Parent** for a parent account (one device per child).                                                      |
+| Username / Password     | Your PRONOTE username and password.                                                                                                             |
+| Refresh interval (min)  | How often PRONOTE is read. 15 minutes is plenty; the server is shared by the whole school.                                                      |
+| Homework horizon        | How many days of homework are counted and listed, from the next school day (7 by default). During the holidays, the days count from the return. |
+| Time zone of the school | `Europe/Paris` by default. Overseas schools: `Indian/Reunion`, `America/Martinique`, `Pacific/Noumea`…                                          |
+| Detailed logs           | Turn on to understand a problem, then off again.                                                                                                |
 
 Save, then press **Test the connection**: it tells you who is logged in and what was
 found for each student.
@@ -80,12 +80,13 @@ The devices are read-only: nothing is changed on PRONOTE.
 
 ### Triggers
 
-| Trigger                         | When                                                  | Variables                                                                                                          |
-| ------------------------------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| A new grade is published        | A grade appeared since the previous read.             | student name, subject, grade, out of, grade out of 20, grade as written, coefficient, class average, comment, date |
-| New homework is given           | Homework appeared or changed since the previous read. | student name, subject, description, due date                                                                       |
-| A lesson is canceled            | A lesson of the coming days is now canceled.          | student name, subject, date, start time, end time, PRONOTE status                                                  |
-| An absence or delay is recorded | The school recorded an absence or a delay.            | student name, kind (`absence` / `delay`), date, justified (`yes` / `no`), minutes late, reason                     |
+| Trigger                                      | When                                                                           | Variables                                                                                                          |
+| -------------------------------------------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
+| A new grade is published                     | A grade appeared since the previous read.                                      | student name, subject, grade, out of, grade out of 20, grade as written, coefficient, class average, comment, date |
+| New homework is given                        | Homework appeared or changed since the previous read.                          | student name, subject, description, due date                                                                       |
+| A lesson is canceled                         | A lesson of the coming days is now canceled.                                   | student name, subject, date, start time, end time, PRONOTE status                                                  |
+| An absence or delay is recorded              | The school recorded an absence or a delay.                                     | student name, kind (`absence` / `delay`), date, justified (`yes` / `no`), minutes late, reason                     |
+| A note is written in the correspondence book | A teacher or the school wrote a note (observation, encouragement, book issue). | student name, kind (`issue` / `observation` / `encouragement` / `other`), title, subject, comment, date            |
 
 Every trigger can be limited to one student. The first read after installing only
 remembers what is already there: nothing is announced for the grades of the past
@@ -105,8 +106,17 @@ Say "First lesson at {{first_lesson}}. Homework: {{homework_text}}"_.
 ## Widgets
 
 - **PRONOTE student**: average, homework to do, absences, the next lesson, the next
-  school day, the last grade, the unread messages, and the list of homework. A
-  **Refresh** button reads PRONOTE now.
+  school day, the last grade, the unread messages, and one list, chosen in the
+  widget's **List** setting:
+  - **Homework** (default): the homework of the homework horizon, each marked
+    **Done**, **Not done**, **Today** or **Tomorrow**, as in PRONOTE;
+  - **Last grades**: the 8 most recent grades, with the class average;
+  - **Correspondence book**: the notes of the teachers and the school
+    (observations, encouragements, book issues) of the current period.
+
+  Add the widget several times to see several lists. A **Refresh** button reads
+  PRONOTE now.
+
 - **PRONOTE timetable**: the lessons of today, tomorrow or the next school day, with
   canceled lessons and tests flagged.
 

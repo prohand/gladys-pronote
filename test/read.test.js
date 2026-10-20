@@ -102,14 +102,35 @@ test('a parent account reads every child, each with their own data', async () =>
   assert.equal(first.delays[0].minutes, 10);
 });
 
-test('the homework is read three weeks ahead, the timetable eight days', async () => {
+test('the timetable is read three weeks ahead, the homework three more', async () => {
+  // Three weeks find the return after two weeks of holidays; the homework is
+  // counted from that return, up to the largest homework horizon.
   const { api } = await read([lea()]);
-  const [, , start, end] = api.calls.find(([name]) => name === 'assignmentsFromIntervals');
-  assert.deepEqual(start, at(2026, 10, 14));
-  assert.deepEqual(end, at(2026, 11, 4));
   const [, , from, to] = api.calls.find(([name]) => name === 'timetableFromIntervals');
   assert.deepEqual(from, at(2026, 10, 14));
-  assert.deepEqual(to, at(2026, 10, 22));
+  assert.deepEqual(to, at(2026, 11, 5));
+  const [, , start, end] = api.calls.find(([name]) => name === 'assignmentsFromIntervals');
+  assert.deepEqual(start, at(2026, 10, 14));
+  assert.deepEqual(end, at(2026, 11, 26));
+});
+
+test('the notes of the correspondence book, the most recent first', async () => {
+  const { snapshot } = await read([lea()]);
+  const [encouragement, issue] = snapshot.students[0].observations;
+  assert.deepEqual(
+    { ...encouragement, key: undefined },
+    {
+      key: undefined,
+      date: at(2026, 10, 9, 15).toISOString(),
+      title: 'Encouragements',
+      kind: 'encouragement',
+      subject: '',
+      comment: 'Très bonne participation',
+      read: false,
+    },
+  );
+  assert.equal(issue.kind, 'issue');
+  assert.equal(issue.subject, 'SVT');
 });
 
 test('a tab that fails is null, the others are still read', async () => {

@@ -11,13 +11,13 @@ import { DEVICE_FEATURE_CATEGORIES, DEVICE_FEATURE_TYPES } from '@gladysassistan
 import {
   gradeLine,
   homeworkOn,
+  homeworkShown,
   lastGrade,
   lessonLine,
   nextLesson,
   nextSchoolDay,
-  pendingHomework,
 } from '../pronote/derive.js';
-import { addDays, dayKey, timeOf } from '../pronote/format.js';
+import { dayKey, timeOf } from '../pronote/format.js';
 import { studentPlatformId } from './ids.js';
 
 export const DEVICE_TYPE = 'student';
@@ -117,10 +117,9 @@ export function studentStates(gladys, account, student, now, config) {
     text(FEATURES.LAST_GRADE, gradeLine(lastGrade(student)));
   }
   if (student.homework) {
-    const limit = dayKey(addDays(now, config.homework_days));
     number(
       FEATURES.HOMEWORK_PENDING,
-      pendingHomework(student, now).filter((item) => dayKey(item.due) <= limit).length,
+      homeworkShown(student, now, config.homework_days).filter((item) => !item.done).length,
     );
   }
   if (student.lessons) {

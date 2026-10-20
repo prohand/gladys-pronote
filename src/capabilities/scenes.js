@@ -2,7 +2,8 @@
 // Scene triggers and scene actions (Gladys 5.1+).
 //
 // Triggers: what PRONOTE shows that was not there at the previous read — a new
-// grade, new homework, a lesson canceled, a new absence or delay. They are fired
+// grade, new homework, a lesson canceled, a new absence or delay, a new note in
+// the correspondence book. They are fired
 // by src/sync.js after each timed read (see src/pronote/events.js for what
 // "new" means). Every event carries the student's device as `device`, which the
 // `device` filter field of each trigger matches.
@@ -28,6 +29,7 @@ export const SCENE_TRIGGERS = {
   homework: 'new_homework',
   cancellations: 'lesson_canceled',
   absences: 'new_absence',
+  observations: 'new_observation',
 };
 
 /** Scene action keys. Never rename. */

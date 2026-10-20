@@ -1,8 +1,8 @@
 # PRONOTE pour Gladys
 
 Cette intégration amène **PRONOTE**, le logiciel de vie scolaire de la plupart des
-établissements français, dans Gladys : notes, devoirs, emploi du temps, absences et
-messages non lus d'un élève — ou de chaque enfant d'un compte parent.
+établissements français, dans Gladys : notes, devoirs, emploi du temps, absences,
+carnet de correspondance et messages non lus d'un élève — ou de chaque enfant d'un compte parent.
 
 Elle lit PRONOTE comme le fait l'application PRONOTE, toutes les quelques minutes,
 et publie ce qu'elle trouve sous forme d'appareils Gladys, de déclencheurs de
@@ -24,15 +24,15 @@ scènes et de widgets de tableau de bord.
 
 Dans Gladys, ouvrez **Intégrations → PRONOTE → Configuration**.
 
-| Champ                                | Quoi mettre                                                                                              |
-| ------------------------------------ | -------------------------------------------------------------------------------------------------------- |
-| Adresse PRONOTE                      | L'adresse de l'espace PRONOTE. La fin (`eleve.html`, `parent.html`) n'est pas nécessaire.                |
-| Type de compte                       | **Élève** pour un compte élève, **Parent** pour un compte parent (un appareil par enfant).               |
-| Identifiant / Mot de passe           | Votre identifiant et votre mot de passe PRONOTE.                                                         |
-| Intervalle de rafraîchissement (min) | Fréquence de lecture de PRONOTE. 15 minutes suffisent ; le serveur est partagé par tout l'établissement. |
-| Horizon des devoirs                  | Nombre de jours à l'avance pour compter et lister les devoirs à faire (7 par défaut).                    |
-| Fuseau horaire de l'établissement    | `Europe/Paris` par défaut. Outre-mer : `Indian/Reunion`, `America/Martinique`, `Pacific/Noumea`…         |
-| Journaux détaillés                   | À activer pour comprendre un problème, puis à désactiver.                                                |
+| Champ                                | Quoi mettre                                                                                                                                                       |
+| ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Adresse PRONOTE                      | L'adresse de l'espace PRONOTE. La fin (`eleve.html`, `parent.html`) n'est pas nécessaire.                                                                         |
+| Type de compte                       | **Élève** pour un compte élève, **Parent** pour un compte parent (un appareil par enfant).                                                                        |
+| Identifiant / Mot de passe           | Votre identifiant et votre mot de passe PRONOTE.                                                                                                                  |
+| Intervalle de rafraîchissement (min) | Fréquence de lecture de PRONOTE. 15 minutes suffisent ; le serveur est partagé par tout l'établissement.                                                          |
+| Horizon des devoirs                  | Nombre de jours de devoirs comptés et listés, à partir du prochain jour de cours (7 par défaut). Pendant les vacances, les jours comptent à partir de la rentrée. |
+| Fuseau horaire de l'établissement    | `Europe/Paris` par défaut. Outre-mer : `Indian/Reunion`, `America/Martinique`, `Pacific/Noumea`…                                                                  |
+| Journaux détaillés                   | À activer pour comprendre un problème, puis à désactiver.                                                                                                         |
 
 Enregistrez, puis appuyez sur **Tester la connexion** : elle indique qui est
 connecté et ce qui a été trouvé pour chaque élève.
@@ -88,12 +88,13 @@ Les appareils sont en lecture seule : rien n'est modifié dans PRONOTE.
 
 ### Déclencheurs
 
-| Déclencheur                        | Quand                                              | Variables                                                                                                                   |
-| ---------------------------------- | -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| Une nouvelle note est publiée      | Une note est apparue depuis la lecture précédente. | nom de l'élève, matière, note, sur, note sur 20, note telle qu'écrite, coefficient, moyenne de la classe, commentaire, date |
-| Un nouveau devoir est donné        | Un devoir est apparu ou a changé.                  | nom de l'élève, matière, description, pour le                                                                               |
-| Un cours est annulé                | Un cours des prochains jours est désormais annulé. | nom de l'élève, matière, date, heure de début, heure de fin, statut PRONOTE                                                 |
-| Une absence ou un retard est saisi | L'établissement a saisi une absence ou un retard.  | nom de l'élève, type (`absence` / `delay`), date, justifié (`yes` / `no`), minutes de retard, motif                         |
+| Déclencheur                                       | Quand                                                                                           | Variables                                                                                                                   |
+| ------------------------------------------------- | ----------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| Une nouvelle note est publiée                     | Une note est apparue depuis la lecture précédente.                                              | nom de l'élève, matière, note, sur, note sur 20, note telle qu'écrite, coefficient, moyenne de la classe, commentaire, date |
+| Un nouveau devoir est donné                       | Un devoir est apparu ou a changé.                                                               | nom de l'élève, matière, description, pour le                                                                               |
+| Un cours est annulé                               | Un cours des prochains jours est désormais annulé.                                              | nom de l'élève, matière, date, heure de début, heure de fin, statut PRONOTE                                                 |
+| Une absence ou un retard est saisi                | L'établissement a saisi une absence ou un retard.                                               | nom de l'élève, type (`absence` / `delay`), date, justifié (`yes` / `no`), minutes de retard, motif                         |
+| Un mot est écrit dans le carnet de correspondance | Un professeur ou l'établissement a écrit un mot (observation, encouragement, défaut de carnet). | nom de l'élève, type (`issue` / `observation` / `encouragement` / `other`), intitulé, matière, commentaire, date            |
 
 Chaque déclencheur peut être limité à un élève. La première lecture après
 l'installation ne fait que mémoriser ce qui existe déjà : rien n'est annoncé pour
@@ -116,8 +117,18 @@ Exemple : _chaque jour de semaine à 07:00 → Obtenir la journée d'un élève
 ## Widgets
 
 - **Élève PRONOTE** : moyenne, devoirs à faire, absences, prochain cours, prochain
-  jour de cours, dernière note, messages non lus, et la liste des devoirs. Un
-  bouton **Actualiser** relit PRONOTE.
+  jour de cours, dernière note, messages non lus, et une liste, au choix dans le
+  réglage **Liste** du widget :
+  - **Devoirs** (par défaut) : les devoirs de l'horizon des devoirs, chacun marqué
+    **Fait**, **Non fait**, **Aujourd'hui** ou **Demain**, comme dans PRONOTE ;
+  - **Dernières notes** : les 8 notes les plus récentes, avec la moyenne de la
+    classe ;
+  - **Carnet de correspondance** : les mots des professeurs et de l'établissement
+    (observations, encouragements, défauts de carnet) de la période en cours.
+
+  Ajoutez le widget plusieurs fois pour voir plusieurs listes. Un bouton
+  **Actualiser** relit PRONOTE.
+
 - **Emploi du temps PRONOTE** : les cours d'aujourd'hui, de demain ou du prochain
   jour de cours, avec les cours annulés et les contrôles signalés.
 

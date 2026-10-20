@@ -6,6 +6,17 @@ All notable changes to this integration are documented here. The format follows
 
 ## [Unreleased]
 
+### Added
+
+- The student widget has a **List** setting: the homework (default), the last 8 grades with the class average, or the correspondence book. Add the widget several times to see several lists.
+- The homework list shows every homework of the window, each marked **Done** or **Not done** (or **Today** / **Tomorrow**), as PRONOTE does. The "Homework" tile still counts what is not done.
+- The notes of the correspondence book ("carnet de correspondance": observations, encouragements, book issues) are read with the absences, with no extra request to PRONOTE, and shown in the student widget.
+- Scene trigger "A note is written in the correspondence book", with the kind, title, subject, comment and date, and a filter on the kind.
+
+### Fixed
+
+- During the holidays, the widgets showed "0 homework" and "No school day in the coming week" while PRONOTE showed the homework and lessons of the return. The timetable is now read three weeks ahead, and the homework horizon counts its days from the next school day (from the return during the holidays).
+
 ## [0.0.6] - 2026-10-20
 
 ### Fixed

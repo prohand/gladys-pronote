@@ -25,10 +25,10 @@
         "es": "Primeros pasos"
       },
       "description": {
-        "en": "The integration reads your PRONOTE space on the school's server, as the PRONOTE app does: grades, homework, timetable, absences and unread messages. Fill in the address of the PRONOTE space (the one you open in a browser), the kind of account, your username and password, then save. If you log in through an ENT (no PRONOTE password), leave the password empty and use the \"Log in with a QR code\" button below.",
-        "fr": "L'intégration lit votre espace PRONOTE sur le serveur de l'établissement, comme le fait l'application PRONOTE : notes, devoirs, emploi du temps, absences et messages non lus. Renseignez l'adresse de l'espace PRONOTE (celle que vous ouvrez dans un navigateur), le type de compte, votre identifiant et votre mot de passe, puis enregistrez. Si vous vous connectez par un ENT (pas de mot de passe PRONOTE), laissez le mot de passe vide et utilisez le bouton « Se connecter avec un QR code » plus bas.",
-        "de": "Die Integration liest deinen PRONOTE-Bereich auf dem Server der Schule, so wie die PRONOTE-App: Noten, Hausaufgaben, Stundenplan, Fehlzeiten und ungelesene Nachrichten. Gib die Adresse des PRONOTE-Bereichs ein (die du im Browser öffnest), die Kontoart, deinen Benutzernamen und dein Passwort, und speichere. Wenn du dich über ein ENT anmeldest (kein PRONOTE-Passwort), lass das Passwort leer und nutze unten die Schaltfläche „Mit QR-Code anmelden“.",
-        "es": "La integración lee su espacio PRONOTE en el servidor del centro, como hace la app PRONOTE: notas, deberes, horario, ausencias y mensajes no leídos. Indique la dirección del espacio PRONOTE (la que abre en un navegador), el tipo de cuenta, su usuario y su contraseña, y guarde. Si inicia sesión mediante un ENT (sin contraseña de PRONOTE), deje la contraseña vacía y use el botón «Iniciar sesión con un código QR» más abajo."
+        "en": "The integration reads your PRONOTE space on the school's server, as the PRONOTE app does: grades, homework, timetable, absences, the correspondence book and unread messages. Fill in the address of the PRONOTE space (the one you open in a browser), the kind of account, your username and password, then save. If you log in through an ENT (no PRONOTE password), leave the password empty and use the \"Log in with a QR code\" button below.",
+        "fr": "L'intégration lit votre espace PRONOTE sur le serveur de l'établissement, comme le fait l'application PRONOTE : notes, devoirs, emploi du temps, absences, carnet de correspondance et messages non lus. Renseignez l'adresse de l'espace PRONOTE (celle que vous ouvrez dans un navigateur), le type de compte, votre identifiant et votre mot de passe, puis enregistrez. Si vous vous connectez par un ENT (pas de mot de passe PRONOTE), laissez le mot de passe vide et utilisez le bouton « Se connecter avec un QR code » plus bas.",
+        "de": "Die Integration liest deinen PRONOTE-Bereich auf dem Server der Schule, so wie die PRONOTE-App: Noten, Hausaufgaben, Stundenplan, Fehlzeiten, Mitteilungsheft und ungelesene Nachrichten. Gib die Adresse des PRONOTE-Bereichs ein (die du im Browser öffnest), die Kontoart, deinen Benutzernamen und dein Passwort, und speichere. Wenn du dich über ein ENT anmeldest (kein PRONOTE-Passwort), lass das Passwort leer und nutze unten die Schaltfläche „Mit QR-Code anmelden“.",
+        "es": "La integración lee su espacio PRONOTE en el servidor del centro, como hace la app PRONOTE: notas, deberes, horario, ausencias, libreta de correspondencia y mensajes no leídos. Indique la dirección del espacio PRONOTE (la que abre en un navegador), el tipo de cuenta, su usuario y su contraseña, y guarde. Si inicia sesión mediante un ENT (sin contraseña de PRONOTE), deje la contraseña vacía y use el botón «Iniciar sesión con un código QR» más abajo."
       },
       "links": [
         {
@@ -161,10 +161,10 @@
         "es": "Horizonte de deberes (días)"
       },
       "description": {
-        "en": "How many days ahead the homework to do is counted and listed.",
-        "fr": "Nombre de jours à l'avance pour compter et lister les devoirs à faire.",
-        "de": "Wie viele Tage im Voraus die offenen Hausaufgaben gezählt und aufgelistet werden.",
-        "es": "Cuántos días por adelantado se cuentan y listan los deberes pendientes."
+        "en": "How many days of homework are counted and listed, from the next school day (during the holidays, from the return).",
+        "fr": "Nombre de jours de devoirs comptés et listés, à partir du prochain jour de cours (pendant les vacances, à partir de la rentrée).",
+        "de": "Wie viele Tage Hausaufgaben gezählt und aufgelistet werden, ab dem nächsten Schultag (in den Ferien ab Schulbeginn).",
+        "es": "Cuántos días de deberes se cuentan y listan, desde el próximo día de clase (en vacaciones, desde la vuelta)."
       },
       "required": false,
       "default": 7,
@@ -712,6 +712,145 @@
           }
         }
       ]
+    },
+    {
+      "key": "new_observation",
+      "label": {
+        "en": "A note is written in the correspondence book",
+        "fr": "Un mot est écrit dans le carnet de correspondance",
+        "de": "Eine Notiz steht im Mitteilungsheft",
+        "es": "Se escribe una nota en la libreta de correspondencia"
+      },
+      "description": {
+        "en": "A teacher or the school wrote a note (observation, encouragement, book issue) since the previous read.",
+        "fr": "Un professeur ou l'établissement a écrit un mot (observation, encouragement, défaut de carnet) depuis la lecture précédente.",
+        "de": "Eine Lehrkraft oder die Schule hat seit dem letzten Abruf eine Notiz geschrieben (Bemerkung, Lob, Heftmangel).",
+        "es": "Un profesor o el centro ha escrito una nota (observación, ánimo, falta en la libreta) desde la lectura anterior."
+      },
+      "fields": [
+        {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Student",
+            "fr": "Élève",
+            "de": "Schüler",
+            "es": "Alumno"
+          },
+          "required": false
+        },
+        {
+          "key": "kind",
+          "type": "multi_select",
+          "label": {
+            "en": "Kind",
+            "fr": "Type",
+            "de": "Art",
+            "es": "Tipo"
+          },
+          "options": [
+            {
+              "value": "issue",
+              "label": {
+                "en": "Correspondence book issue",
+                "fr": "Défaut de carnet",
+                "de": "Mangel im Mitteilungsheft",
+                "es": "Falta en la libreta"
+              }
+            },
+            {
+              "value": "observation",
+              "label": {
+                "en": "Observation",
+                "fr": "Observation",
+                "de": "Bemerkung",
+                "es": "Observación"
+              }
+            },
+            {
+              "value": "encouragement",
+              "label": {
+                "en": "Encouragement",
+                "fr": "Encouragement",
+                "de": "Lob",
+                "es": "Ánimo"
+              }
+            },
+            {
+              "value": "other",
+              "label": {
+                "en": "Other",
+                "fr": "Autre",
+                "de": "Sonstiges",
+                "es": "Otro"
+              }
+            }
+          ]
+        }
+      ],
+      "variables": [
+        {
+          "key": "student_name",
+          "type": "string",
+          "label": {
+            "en": "Student name",
+            "fr": "Nom de l'élève",
+            "de": "Name des Schülers",
+            "es": "Nombre del alumno"
+          }
+        },
+        {
+          "key": "kind",
+          "type": "string",
+          "label": {
+            "en": "Kind (issue, observation, encouragement, other)",
+            "fr": "Type (issue, observation, encouragement, other)",
+            "de": "Art (issue, observation, encouragement, other)",
+            "es": "Tipo (issue, observation, encouragement, other)"
+          }
+        },
+        {
+          "key": "title",
+          "type": "string",
+          "label": {
+            "en": "Title",
+            "fr": "Intitulé",
+            "de": "Titel",
+            "es": "Título"
+          }
+        },
+        {
+          "key": "subject",
+          "type": "string",
+          "label": {
+            "en": "Subject",
+            "fr": "Matière",
+            "de": "Fach",
+            "es": "Asignatura"
+          }
+        },
+        {
+          "key": "comment",
+          "type": "string",
+          "label": {
+            "en": "Comment",
+            "fr": "Commentaire",
+            "de": "Kommentar",
+            "es": "Comentario"
+          }
+        },
+        {
+          "key": "date",
+          "type": "string",
+          "label": {
+            "en": "Date",
+            "fr": "Date",
+            "de": "Datum",
+            "es": "Fecha"
+          }
+        }
+      ]
     }
   ],
   "scene_actions": [
@@ -947,10 +1086,10 @@
         "es": "Alumno PRONOTE"
       },
       "description": {
-        "en": "Average, homework, absences, next lesson and last grade of a student.",
-        "fr": "Moyenne, devoirs, absences, prochain cours et dernière note d'un élève.",
-        "de": "Durchschnitt, Hausaufgaben, Fehlzeiten, nächste Stunde und letzte Note.",
-        "es": "Media, deberes, ausencias, próxima clase y última nota de un alumno."
+        "en": "Average, homework, next lesson, and the homework, last grades or correspondence book.",
+        "fr": "Moyenne, devoirs, prochain cours, et la liste des devoirs, des dernières notes ou du carnet.",
+        "de": "Durchschnitt, Hausaufgaben, nächste Stunde und Liste: Hausaufgaben, Noten oder Mitteilungsheft.",
+        "es": "Media, deberes, próxima clase y la lista de deberes, últimas notas o libreta."
       },
       "icon": "book-open",
       "settings": [
@@ -971,6 +1110,53 @@
             "es": "Vacío: el primer alumno de la cuenta."
           },
           "required": false
+        },
+        {
+          "key": "list",
+          "type": "select",
+          "label": {
+            "en": "List",
+            "fr": "Liste",
+            "de": "Liste",
+            "es": "Lista"
+          },
+          "description": {
+            "en": "What the list of the widget shows. Add the widget several times to see several lists.",
+            "fr": "Ce que montre la liste du widget. Ajoutez le widget plusieurs fois pour voir plusieurs listes.",
+            "de": "Was die Liste des Widgets zeigt. Füge das Widget mehrmals hinzu, um mehrere Listen zu sehen.",
+            "es": "Lo que muestra la lista del widget. Añada el widget varias veces para ver varias listas."
+          },
+          "required": false,
+          "default": "homework",
+          "options": [
+            {
+              "value": "homework",
+              "label": {
+                "en": "Homework",
+                "fr": "Devoirs",
+                "de": "Hausaufgaben",
+                "es": "Deberes"
+              }
+            },
+            {
+              "value": "grades",
+              "label": {
+                "en": "Last grades",
+                "fr": "Dernières notes",
+                "de": "Letzte Noten",
+                "es": "Últimas notas"
+              }
+            },
+            {
+              "value": "notebook",
+              "label": {
+                "en": "Correspondence book",
+                "fr": "Carnet de correspondance",
+                "de": "Mitteilungsheft",
+                "es": "Libreta de correspondencia"
+              }
+            }
+          ]
         }
       ],
       "action_timeout_seconds": 90

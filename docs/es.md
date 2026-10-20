@@ -1,8 +1,8 @@
 # PRONOTE para Gladys
 
 Esta integración trae **PRONOTE**, el software de vida escolar de la mayoría de los
-centros franceses, a Gladys: notas, deberes, horario, ausencias y mensajes no leídos
-de un alumno — o de cada hijo de una cuenta de padres.
+centros franceses, a Gladys: notas, deberes, horario, ausencias, libreta de correspondencia y
+mensajes no leídos de un alumno — o de cada hijo de una cuenta de padres.
 
 Lee PRONOTE como lo hace la app PRONOTE, cada pocos minutos, y publica lo que
 encuentra como dispositivos de Gladys, disparadores de escenas y widgets del panel.
@@ -23,15 +23,15 @@ encuentra como dispositivos de Gladys, disparadores de escenas y widgets del pan
 
 En Gladys, abra **Integraciones → PRONOTE → Configuración**.
 
-| Campo                            | Qué poner                                                                                             |
-| -------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| Dirección de PRONOTE             | La dirección del espacio PRONOTE. El final (`eleve.html`, `parent.html`) no es necesario.             |
-| Tipo de cuenta                   | **Alumno** para una cuenta de alumno, **Padres** para una cuenta de padres (un dispositivo por hijo). |
-| Usuario / Contraseña             | Su usuario y su contraseña de PRONOTE.                                                                |
-| Intervalo de actualización (min) | Frecuencia de lectura de PRONOTE. Bastan 15 minutos; el servidor lo comparte todo el centro.          |
-| Horizonte de deberes             | Cuántos días por adelantado se cuentan y listan los deberes pendientes (7 por defecto).               |
-| Zona horaria del centro          | `Europe/Paris` por defecto. Ultramar: `Indian/Reunion`, `America/Martinique`, `Pacific/Noumea`…       |
-| Registros detallados             | Actívelo para entender un problema y desactívelo después.                                             |
+| Campo                            | Qué poner                                                                                                                                    |
+| -------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| Dirección de PRONOTE             | La dirección del espacio PRONOTE. El final (`eleve.html`, `parent.html`) no es necesario.                                                    |
+| Tipo de cuenta                   | **Alumno** para una cuenta de alumno, **Padres** para una cuenta de padres (un dispositivo por hijo).                                        |
+| Usuario / Contraseña             | Su usuario y su contraseña de PRONOTE.                                                                                                       |
+| Intervalo de actualización (min) | Frecuencia de lectura de PRONOTE. Bastan 15 minutos; el servidor lo comparte todo el centro.                                                 |
+| Horizonte de deberes             | Cuántos días de deberes se cuentan y listan, desde el próximo día de clase (7 por defecto). En vacaciones, los días cuentan desde la vuelta. |
+| Zona horaria del centro          | `Europe/Paris` por defecto. Ultramar: `Indian/Reunion`, `America/Martinique`, `Pacific/Noumea`…                                              |
+| Registros detallados             | Actívelo para entender un problema y desactívelo después.                                                                                    |
 
 Guarde y pulse **Probar la conexión**: indica quién ha iniciado sesión y qué se ha
 encontrado para cada alumno.
@@ -84,12 +84,13 @@ Los dispositivos son de solo lectura: no se modifica nada en PRONOTE.
 
 ### Disparadores
 
-| Disparador                            | Cuándo                                             | Variables                                                                                                                              |
-| ------------------------------------- | -------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| Se publica una nueva nota             | Ha aparecido una nota desde la lectura anterior.   | nombre del alumno, asignatura, nota, sobre, nota sobre 20, nota tal como se escribe, coeficiente, media de la clase, comentario, fecha |
-| Se ponen nuevos deberes               | Han aparecido o cambiado deberes.                  | nombre del alumno, asignatura, descripción, fecha de entrega                                                                           |
-| Se cancela una clase                  | Una clase de los próximos días queda cancelada.    | nombre del alumno, asignatura, fecha, hora de inicio, hora de fin, estado en PRONOTE                                                   |
-| Se registra una ausencia o un retraso | El centro ha registrado una ausencia o un retraso. | nombre del alumno, tipo (`absence` / `delay`), fecha, justificado (`yes` / `no`), minutos de retraso, motivo                           |
+| Disparador                                           | Cuándo                                                                                 | Variables                                                                                                                              |
+| ---------------------------------------------------- | -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| Se publica una nueva nota                            | Ha aparecido una nota desde la lectura anterior.                                       | nombre del alumno, asignatura, nota, sobre, nota sobre 20, nota tal como se escribe, coeficiente, media de la clase, comentario, fecha |
+| Se ponen nuevos deberes                              | Han aparecido o cambiado deberes.                                                      | nombre del alumno, asignatura, descripción, fecha de entrega                                                                           |
+| Se cancela una clase                                 | Una clase de los próximos días queda cancelada.                                        | nombre del alumno, asignatura, fecha, hora de inicio, hora de fin, estado en PRONOTE                                                   |
+| Se registra una ausencia o un retraso                | El centro ha registrado una ausencia o un retraso.                                     | nombre del alumno, tipo (`absence` / `delay`), fecha, justificado (`yes` / `no`), minutos de retraso, motivo                           |
+| Se escribe una nota en la libreta de correspondencia | Un profesor o el centro ha escrito una nota (observación, ánimo, falta en la libreta). | nombre del alumno, tipo (`issue` / `observation` / `encouragement` / `other`), título, asignatura, comentario, fecha                   |
 
 Cada disparador puede limitarse a un alumno. La primera lectura tras la instalación
 solo memoriza lo que ya existe: no se anuncia nada de las notas de las semanas
@@ -112,8 +113,17 @@ de clase) → Decir «Primera clase a las {{first_lesson}}. Deberes:
 ## Widgets
 
 - **Alumno PRONOTE**: media, deberes pendientes, ausencias, próxima clase, próximo
-  día de clase, última nota, mensajes no leídos y la lista de deberes. Un botón
-  **Actualizar** lee PRONOTE al momento.
+  día de clase, última nota, mensajes no leídos y una lista, a elegir en el ajuste
+  **Lista** del widget:
+  - **Deberes** (por defecto): los deberes del horizonte de deberes, cada uno
+    marcado **Hecho**, **Pendiente**, **Hoy** o **Mañana**, como en PRONOTE;
+  - **Últimas notas**: las 8 notas más recientes, con la media de la clase;
+  - **Libreta de correspondencia**: las notas de los profesores y del centro
+    (observaciones, ánimos, faltas en la libreta) del periodo en curso.
+
+  Añada el widget varias veces para ver varias listas. Un botón **Actualizar**
+  lee PRONOTE al momento.
+
 - **Horario PRONOTE**: las clases de hoy, mañana o el próximo día de clase, con las
   clases canceladas y los exámenes señalados.
 

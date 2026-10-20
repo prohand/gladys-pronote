@@ -11,7 +11,7 @@ import { readFile } from 'node:fs/promises';
 import { DEFAULT_CONFIG } from '../src/config.js';
 import { ACTION_KEYS } from '../src/actions.js';
 import { SCENE_ACTIONS, SCENE_TRIGGERS } from '../src/capabilities/scenes.js';
-import { WIDGET_KEYS } from '../src/capabilities/widgets.js';
+import { STUDENT_LISTS, WIDGET_KEYS } from '../src/capabilities/widgets.js';
 import { EVENT_DATA, KINDS } from '../src/pronote/events.js';
 import { DAYS } from '../src/pronote/derive.js';
 import { LANGUAGES } from '../src/i18n.js';
@@ -87,6 +87,13 @@ test('every key of an event is a declared field or variable', () => {
       status: '',
     },
     absences: { type: 'absence', start: new Date().toISOString(), justified: true, reason: '' },
+    observations: {
+      kind: 'observation',
+      title: 't',
+      subject: 's',
+      comment: '',
+      date: new Date().toISOString(),
+    },
   };
   for (const [kind, key] of Object.entries(SCENE_TRIGGERS)) {
     const trigger = manifest.scene_triggers.find((entry) => entry.key === key);
@@ -107,6 +114,16 @@ test('the day choices are the ones the code knows', () => {
   assert.deepEqual(options(summary.fields).sort(), Object.values(DAYS).sort());
   const timetable = manifest.widgets.find((widget) => widget.key === WIDGET_KEYS.TIMETABLE);
   assert.deepEqual(options(timetable.settings).sort(), Object.values(DAYS).sort());
+});
+
+test('the list choices of the student widget are the ones the code knows', () => {
+  const student = manifest.widgets.find((widget) => widget.key === WIDGET_KEYS.STUDENT);
+  const list = student.settings.find((setting) => setting.key === 'list');
+  assert.deepEqual(
+    list.options.map((option) => option.value).sort(),
+    Object.values(STUDENT_LISTS).sort(),
+  );
+  assert.equal(list.default, STUDENT_LISTS.HOMEWORK);
 });
 
 test('every widget is registered and handled', () => {
