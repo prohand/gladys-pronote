@@ -6,6 +6,8 @@ All notable changes to this integration are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.0.8] - 2026-10-20
+
 ### Added
 
 - Three widgets with one list each: **PRONOTE homework** (with a "To do" tile), **PRONOTE grades** (with the average) and **PRONOTE correspondence book**. A dashboard can spread the information over small cards instead of adding the student widget several times.
@@ -73,7 +75,8 @@ All notable changes to this integration are documented here. The format follows
 - Configuration buttons: test the connection, log in with a QR code, forget the saved session.
 - Texts in English, French, German and Spanish (configuration screen, messages, widgets, documentation).
 
-[Unreleased]: https://github.com/prohand/gladys-pronote/compare/v0.0.7...HEAD
+[Unreleased]: https://github.com/prohand/gladys-pronote/compare/v0.0.8...HEAD
+[0.0.8]: https://github.com/prohand/gladys-pronote/compare/v0.0.7...v0.0.8
 [0.0.7]: https://github.com/prohand/gladys-pronote/compare/v0.0.6...v0.0.7
 [0.0.6]: https://github.com/prohand/gladys-pronote/compare/v0.0.5...v0.0.6
 [0.0.5]: https://github.com/prohand/gladys-pronote/compare/v0.0.4...v0.0.5
