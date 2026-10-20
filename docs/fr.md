@@ -134,22 +134,19 @@ jamais PRONOTE.
 
 ## Dépannage
 
-| Message                                           | Que faire                                                                                                                                                                            |
-| ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| PRONOTE a refusé l'identifiant ou le mot de passe | Vérifiez-les sur le site PRONOTE. La lecture est suspendue jusqu'à l'enregistrement de la configuration ou un test.                                                                  |
-| PRONOTE demande de configurer la sécurité         | Connectez-vous une fois dans l'application ou le site PRONOTE pour la terminer (nouveau mot de passe, PIN), puis utilisez le QR code.                                                |
-| L'adresse IP a été suspendue                      | Trop d'échecs de connexion ou de requêtes : la prochaine lecture attend une heure, le bouton Actualiser et l'action de scène aussi. N'utilisez pas « Tester la connexion » d'ici là. |
-| Le serveur est injoignable                        | Vérifiez l'adresse. Un serveur occupé est réessayé à la lecture suivante.                                                                                                            |
+| Message                                             | Que faire                                                                                                                                                                                                                                    |
+| --------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| PRONOTE a refusé l'identifiant ou le mot de passe   | Vérifiez-les sur le site PRONOTE. La lecture est suspendue jusqu'à l'enregistrement de la configuration ou un test.                                                                                                                          |
+| PRONOTE demande de configurer la sécurité           | Connectez-vous une fois dans l'application ou le site PRONOTE pour la terminer (nouveau mot de passe, PIN), puis utilisez le QR code.                                                                                                        |
+| L'adresse IP a été suspendue                        | Trop d'échecs de connexion ou de requêtes : la prochaine lecture attend une heure, le bouton Actualiser et l'action de scène aussi. N'utilisez pas « Tester la connexion » d'ici là.                                                         |
+| PRONOTE a fermé la session juste après la connexion | PRONOTE a refusé une page à ce compte et a fermé la session. La prochaine lecture attend une heure, comme après une suspension, pour ne pas multiplier les connexions. Envoyez les journaux de l'intégration au développeur si cela revient. |
+| Le serveur est injoignable                          | Vérifiez l'adresse. Un serveur occupé est réessayé à la lecture suivante.                                                                                                                                                                    |
 
 Activez **Journaux détaillés** pour voir chaque étape dans les journaux de
 l'intégration. Les mots de passe et jetons ne sont jamais journalisés.
 
 ## Limites connues
 
-- **Comptes parents avec plusieurs enfants** : l'emploi du temps est lu pour
-  chaque enfant, mais pour les notes, devoirs et absences PRONOTE peut répondre
-  pour l'enfant qu'il sélectionne par défaut. Si deux enfants affichent les mêmes
-  notes, utilisez plutôt le compte élève de chaque enfant.
 - Les **comptes enseignants** ne sont pas pris en charge.
 - PRONOTE n'a pas de notifications : les nouveautés sont trouvées à chaque lecture,
   une nouvelle note apparaît donc dans l'intervalle de rafraîchissement.

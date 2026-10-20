@@ -130,6 +130,7 @@ test('a network error on the token is not taken for a refused token', async () =
 
 test('an expired session is opened again and the read retried once', async () => {
   const { api, session } = setup();
+  await session.open(); // an earlier read
   let attempts = 0;
   const result = await session.run(async () => {
     attempts += 1;
@@ -140,6 +141,40 @@ test('an expired session is opened again and the read retried once', async () =>
   });
 
   assert.equal(result, 'read');
+  assert.equal(attempts, 2);
+  assert.deepEqual(
+    api.calls.map(([name]) => name),
+    ['loginCredentials', 'loginToken'],
+  );
+});
+
+test('a session closed by the read that opened it is not opened again', async () => {
+  const { api, session } = setup();
+  let attempts = 0;
+  const read = session.run(async () => {
+    attempts += 1;
+    throw pawnoteError('SessionExpiredError');
+  });
+
+  await assert.rejects(read, { name: 'SessionClosedError' });
+  assert.equal(attempts, 1);
+  assert.deepEqual(
+    api.calls.map(([name]) => name),
+    ['loginCredentials'],
+  );
+  assert.equal(session.handle, null);
+});
+
+test('a session closed again right after the new login stops there', async () => {
+  const { api, session } = setup();
+  await session.open();
+  let attempts = 0;
+  const read = session.run(async () => {
+    attempts += 1;
+    throw pawnoteError('SessionExpiredError');
+  });
+
+  await assert.rejects(read, { name: 'SessionClosedError' });
   assert.equal(attempts, 2);
   assert.deepEqual(
     api.calls.map(([name]) => name),

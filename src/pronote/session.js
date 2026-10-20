@@ -26,7 +26,13 @@ import * as pawnote from 'pawnote';
 import { createLogger } from '@gladysassistant/integration-sdk';
 import { ACCOUNT_KINDS, hasCredentials } from '../config.js';
 import { readJson, removeJson, writeJson } from '../storage.js';
-import { NotConfiguredError, describeError, ERROR_CODES, isSessionLost } from './errors.js';
+import {
+  NotConfiguredError,
+  SessionClosedError,
+  describeError,
+  ERROR_CODES,
+  isSessionLost,
+} from './errors.js';
 import { createPronoteFetcher } from './fetcher.js';
 
 const logger = createLogger({ name: 'session' });
@@ -144,13 +150,18 @@ export class PronoteSession {
 
   /**
    * Run `fn` with a logged-in session; log in again and retry once when
-   * PRONOTE says the session expired.
+   * PRONOTE says the session of an earlier read expired.
+   *
+   * A session that "expires" during the read that opened it did not time out:
+   * PRONOTE ended it (after a refused page, for one). Logging in again would
+   * only fail the same way, and every login counts towards an IP suspension.
    *
    * @template T
    * @param {(handle: object, api: object) => Promise<T>} fn
    * @returns {Promise<T>}
    */
   async run(fn) {
+    const reused = Boolean(this.handle);
     const handle = await this.open();
     try {
       return await fn(handle, this.api);
@@ -159,12 +170,15 @@ export class PronoteSession {
       if (!isSessionLost(err)) {
         throw err;
       }
+      if (!reused) {
+        throw new SessionClosedError(err);
+      }
       logger.info('PRONOTE session expired, logging in again');
       try {
         return await fn(await this.open(), this.api);
       } catch (retryError) {
         this.drop();
-        throw retryError;
+        throw isSessionLost(retryError) ? new SessionClosedError(retryError) : retryError;
       }
     }
   }
