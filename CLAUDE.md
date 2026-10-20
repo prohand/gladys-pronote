@@ -18,7 +18,8 @@ Started from the official JavaScript template; workflows shared with
 
 Gladys 5.1+: scene triggers (new grade, new homework, lesson canceled, new
 absence, new correspondence book note), scene actions (read now, day summary)
-and two widgets (student, with a homework / grades / notebook list; timetable).
+and five widgets (student summary; homework, grades, notebook: one list each;
+timetable).
 
 ## Commands
 

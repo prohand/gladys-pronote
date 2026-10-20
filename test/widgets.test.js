@@ -32,8 +32,10 @@ async function content(key, settings = {}, language = 'fr') {
 const studentId = (index) =>
   buildDiscoveredDevices(current.gladys, current.sync.snapshot)[index + 1].external_id;
 
-test('before the first read, both widgets say they wait', async () => {
-  for (const key of ['student', 'timetable']) {
+const KEYS = ['student', 'timetable', 'homework', 'grades', 'notebook'];
+
+test('before the first read, every widget says it waits', async () => {
+  for (const key of KEYS) {
     const { components } = await content(key);
     assert.equal(components[0].type, 'text');
     assert.match(components[0].text.fr, /première lecture/);
@@ -43,9 +45,11 @@ test('before the first read, both widgets say they wait', async () => {
 test('a failed first read shows why', async () => {
   current.api.failures.loginCredentials = 'BadCredentialsError';
   await current.sync.sync();
-  const { components } = await content('student');
-  assert.equal(components[1].type, 'status');
-  assert.equal(components[1].items[0].color, 'danger');
+  for (const key of KEYS) {
+    const { components } = await content(key);
+    assert.equal(components[1].type, 'status');
+    assert.equal(components[1].items[0].color, 'danger');
+  }
 });
 
 test('the student widget, in every language', async () => {
@@ -60,7 +64,15 @@ test('the student widget, in every language', async () => {
     tiles.map((tile) => tile.value),
     ['14,5', 2, 1],
   );
-  const list = components.find((component) => component.type === 'card-list');
+  assert.ok(!components.some((component) => component.type === 'card-list'), 'no list by default');
+  const status = components.find((component) => component.type === 'status');
+  assert.equal(status.items[0].value, '14:00 ANGLAIS (B12)');
+  assert.equal(status.items[1].label.fr, 'Prochain jour de cours', 'a lesson is left today');
+  assert.ok(components.some((component) => component.type === 'button'));
+
+  const list = (
+    await content('student', { student: studentId(0), list: 'homework' })
+  ).components.find((component) => component.type === 'card-list');
   assert.deepEqual(
     list.items.map((item) => [item.title, item.badge.text]),
     [
@@ -71,9 +83,53 @@ test('the student widget, in every language', async () => {
   );
   assert.equal(list.items[0].badge.color, 'warning', 'due tomorrow');
   assert.equal(list.items[1].badge.color, 'success', 'done');
-  const status = components.find((component) => component.type === 'status');
-  assert.equal(status.items[0].value, '14:00 ANGLAIS (B12)');
-  assert.ok(components.some((component) => component.type === 'button'));
+});
+
+test('the one-list widgets show the student, one tile and the list', async () => {
+  await current.sync.sync();
+  for (const language of LANGUAGES) {
+    for (const key of ['homework', 'grades', 'notebook']) {
+      await content(key, { student: studentId(0) }, language);
+      await content(key, { student: studentId(1) }, language);
+    }
+  }
+  const parts = async (key) => {
+    const { components } = await content(key, { student: studentId(0) });
+    assert.ok(!components.some((component) => component.type === 'button'), key);
+    return {
+      heading: components[0].text,
+      tiles: components.filter((component) => component.type === 'value'),
+      list: components.find((component) => component.type === 'card-list'),
+    };
+  };
+
+  const homework = await parts('homework');
+  assert.match(homework.heading, /· Devoirs$/);
+  assert.deepEqual(
+    homework.tiles.map((tile) => [tile.label.fr, tile.value]),
+    [['À faire', 2]],
+  );
+  assert.equal(homework.list.items.length, 3);
+
+  const grades = await parts('grades');
+  assert.match(grades.heading, /· Dernières notes$/);
+  assert.deepEqual(
+    grades.tiles.map((tile) => tile.value),
+    ['14,5'],
+  );
+  assert.equal(grades.list.items[1].badge.text, '15/20');
+
+  const notebook = await parts('notebook');
+  assert.match(notebook.heading, /· Carnet de correspondance$/);
+  assert.deepEqual(notebook.tiles, []);
+  assert.equal(notebook.list.items.length, 2);
+});
+
+test('a part PRONOTE did not give is said unavailable', async () => {
+  current.api.failures.gradesOverview = 'AccessDeniedError';
+  await current.sync.sync();
+  const { components } = await content('grades', { student: studentId(0) });
+  assert.match(components[1].text.fr, /Indisponible/);
 });
 
 test('the student widget lists the last grades or the correspondence book', async () => {
@@ -133,7 +189,7 @@ test('the timetable widget flags canceled lessons and tests', async () => {
   assert.equal(list.items[0].title, '09:00–10:00 MATHEMATIQUES');
 });
 
-test('during the holidays, both widgets look at the return', async () => {
+test('during the holidays, the widgets look at the return', async () => {
   // Tuesday 20 October, Toussaint holidays: PRONOTE shows the homework and the
   // lessons of Monday 2 November, the widgets did not look that far.
   current.sync.stop();
@@ -156,7 +212,12 @@ test('during the holidays, both widgets look at the return', async () => {
 
   const student = (await content('student')).components;
   assert.equal(student.find((component) => component.label?.fr === 'Devoirs').value, 1);
-  const list = student.find((component) => component.type === 'card-list');
+  const status = student.find((component) => component.type === 'status');
+  assert.match(status.items[0].value, /02\/11 08:00 PHYSIQUE-CHIMIE/);
+  assert.notEqual(status.items[1].label.fr, 'Prochain jour de cours', 'said once, not twice');
+  const list = (await content('homework')).components.find(
+    (component) => component.type === 'card-list',
+  );
   assert.deepEqual(
     list.items.map((item) => [item.title, item.badge.text]),
     [

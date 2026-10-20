@@ -2,14 +2,16 @@
 // Dashboard widgets (Gladys 5.1+).
 //
 //   - `student`: one student at a glance — average, homework to do, absences,
-//     the next lesson, the last grade, the unread messages, and one list: the
-//     homework (done or not), the last grades or the correspondence book, as
-//     the widget's `list` setting says (a widget shows one list at most: add
-//     the widget several times to see several). A button reads PRONOTE now.
+//     the next lesson, the last grade, the unread messages. Its `list` setting
+//     (none by default) can add one of the lists below. A button reads PRONOTE
+//     now.
+//   - `homework`, `grades`, `notebook`: one list each — the homework (done or
+//     not), the last grades, the correspondence book — so a dashboard spreads
+//     them over small cards instead of repeating the summary in each.
 //   - `timetable`: the lessons of one day (today, tomorrow or the next school
 //     day), canceled lessons and tests flagged.
 //
-// Both answer from the last read: opening a dashboard never calls PRONOTE.
+// All answer from the last read: opening a dashboard never calls PRONOTE.
 // The values are computed rather than bound to the device features, so a
 // widget works before the user created the devices; src/sync.js nudges the
 // widgets after every read instead.
@@ -34,10 +36,21 @@ import { localeOf, pick } from '../i18n.js';
 const logger = createLogger({ name: 'widgets' });
 
 /** Widget keys, as declared in the manifest. Never rename. */
-export const WIDGET_KEYS = { STUDENT: 'student', TIMETABLE: 'timetable' };
+export const WIDGET_KEYS = {
+  STUDENT: 'student',
+  TIMETABLE: 'timetable',
+  HOMEWORK: 'homework',
+  GRADES: 'grades',
+  NOTEBOOK: 'notebook',
+};
 
 /** What the list of the `student` widget shows (its `list` setting). Never rename. */
-export const STUDENT_LISTS = { HOMEWORK: 'homework', GRADES: 'grades', NOTEBOOK: 'notebook' };
+export const STUDENT_LISTS = {
+  NONE: 'none',
+  HOMEWORK: 'homework',
+  GRADES: 'grades',
+  NOTEBOOK: 'notebook',
+};
 
 /** A card-list holds 8 rows at most. */
 const LIST_SIZE = 8;
@@ -60,6 +73,20 @@ const T = {
   },
   average: { en: 'Average', fr: 'Moyenne', de: 'Durchschnitt', es: 'Media' },
   homework: { en: 'Homework', fr: 'Devoirs', de: 'Hausaufgaben', es: 'Deberes' },
+  todo: { en: 'To do', fr: 'À faire', de: 'Offen', es: 'Pendientes' },
+  grades: { en: 'Last grades', fr: 'Dernières notes', de: 'Letzte Noten', es: 'Últimas notas' },
+  notebook: {
+    en: 'Correspondence book',
+    fr: 'Carnet de correspondance',
+    de: 'Mitteilungsheft',
+    es: 'Libreta de correspondencia',
+  },
+  unavailable: {
+    en: 'Not available from PRONOTE for now.',
+    fr: 'Indisponible dans PRONOTE pour le moment.',
+    de: 'Derzeit nicht von PRONOTE verfügbar.',
+    es: 'No disponible en PRONOTE por ahora.',
+  },
   absences: { en: 'Absences', fr: 'Absences', de: 'Fehlzeiten', es: 'Ausencias' },
   nextLesson: {
     en: 'Next lesson',
@@ -155,23 +182,38 @@ function dayHeading(day, language) {
   }).format(new Date(`${day}T12:00:00`));
 }
 
+/** The status row of the last error, `null` when the last read went well. */
+function errorItem(sync, language) {
+  return sync.lastError
+    ? {
+        label: T.connection,
+        icon: 'alert-triangle',
+        value: truncate(pick(language, sync.lastError.message), 40),
+        color: WIDGET_COLORS.DANGER,
+      }
+    : null;
+}
+
 /** The content shown when there is nothing to show yet. */
 function emptyContent(sync, language, text) {
   const components = [{ type: 'text', text }];
-  if (sync.lastError) {
-    components.push({
-      type: 'status',
-      items: [
-        {
-          label: T.connection,
-          icon: 'alert-triangle',
-          value: truncate(pick(language, sync.lastError.message), 40),
-          color: WIDGET_COLORS.DANGER,
-        },
-      ],
-    });
+  const error = errorItem(sync, language);
+  if (error) {
+    components.push({ type: 'status', items: [error] });
   }
   return { ttl_seconds: 60, components };
+}
+
+/**
+ * The student a widget's settings name, or the content to show instead:
+ * `{ student }` or `{ content }`.
+ */
+function studentOf(gladys, sync, settings, language) {
+  if (!sync.snapshot) {
+    return { content: emptyContent(sync, language, T.waiting) };
+  }
+  const student = findStudent(gladys, sync.snapshot, settings.student);
+  return student ? { student } : { content: emptyContent(sync, language, T.noStudent) };
 }
 
 /** The color of a grade badge, from the mark brought back to /20. */
@@ -275,8 +317,11 @@ function notebookList(student, language) {
   };
 }
 
-/** The list the `student` widget shows, `null` when PRONOTE did not give it. */
+/** The list the `student` widget shows, `null` when none or PRONOTE did not give it. */
 function studentList(student, which, shown, now, language) {
+  if (which === STUDENT_LISTS.NONE) {
+    return null;
+  }
   if (which === STUDENT_LISTS.GRADES) {
     return student.grades ? gradesList(student, language) : null;
   }
@@ -296,20 +341,16 @@ const REFRESH_BUTTON = {
 
 /** The `student` widget content. */
 export function studentContent(gladys, sync, { settings = {}, language = 'en' }) {
-  const snapshot = sync.snapshot;
-  if (!snapshot) {
-    return emptyContent(sync, language, T.waiting);
-  }
-  const student = findStudent(gladys, snapshot, settings.student);
+  const { student, content } = studentOf(gladys, sync, settings, language);
   if (!student) {
-    return emptyContent(sync, language, T.noStudent);
+    return content;
   }
   const now = sync.now();
   const shown = homeworkShown(student, now, sync.config?.homework_days ?? 7);
   const todo = shown.filter((item) => !item.done);
   const which = Object.values(STUDENT_LISTS).includes(settings.list)
     ? settings.list
-    : STUDENT_LISTS.HOMEWORK;
+    : STUDENT_LISTS.NONE;
 
   const components = [{ type: 'text', variant: 'heading', text: truncate(student.name, 40) }];
   if (student.grades?.average !== null && student.grades?.average !== undefined) {
@@ -340,20 +381,25 @@ export function studentContent(gladys, sync, { settings = {}, language = 'en' })
 
   const items = [];
   if (student.lessons) {
+    const lesson = nextLesson(student, now);
     items.push({
       label: T.nextLesson,
       icon: 'clock',
-      value: truncate(lessonLine(nextLesson(student, now), now), 40),
+      value: truncate(lessonLine(lesson, now), 40),
       color: WIDGET_COLORS.PRIMARY,
     });
-    const day = nextSchoolDay(student, now);
-    const first = day ? daySummary(student, DAYS.NEXT_SCHOOL_DAY, now).first : null;
-    items.push({
-      label: T.nextDay,
-      icon: 'sunrise',
-      value: first ? `${dayLabel(day, language)} ${timeOf(first.start)}` : '—',
-      color: WIDGET_COLORS.NEUTRAL,
-    });
+    // Once today's lessons are over, the next lesson already is the start of
+    // the next school day: the row would say the same thing twice.
+    if (!lesson || dayKey(lesson.start) === dayKey(now)) {
+      const day = nextSchoolDay(student, now);
+      const first = day ? daySummary(student, DAYS.NEXT_SCHOOL_DAY, now).first : null;
+      items.push({
+        label: T.nextDay,
+        icon: 'sunrise',
+        value: first ? `${dayLabel(day, language)} ${timeOf(first.start)}` : '—',
+        color: WIDGET_COLORS.NEUTRAL,
+      });
+    }
   }
   if (student.grades) {
     items.push({
@@ -363,21 +409,18 @@ export function studentContent(gladys, sync, { settings = {}, language = 'en' })
       color: WIDGET_COLORS.INFO,
     });
   }
-  if (typeof snapshot.account.unread_messages === 'number') {
+  const unread = sync.snapshot.account.unread_messages;
+  if (typeof unread === 'number') {
     items.push({
       label: T.unread,
       icon: 'mail',
-      value: snapshot.account.unread_messages,
-      color: snapshot.account.unread_messages ? WIDGET_COLORS.WARNING : WIDGET_COLORS.SUCCESS,
+      value: unread,
+      color: unread ? WIDGET_COLORS.WARNING : WIDGET_COLORS.SUCCESS,
     });
   }
-  if (sync.lastError) {
-    items.push({
-      label: T.connection,
-      icon: 'alert-triangle',
-      value: truncate(pick(language, sync.lastError.message), 40),
-      color: WIDGET_COLORS.DANGER,
-    });
+  const error = errorItem(sync, language);
+  if (error) {
+    items.push(error);
   }
   if (items.length) {
     components.push({ type: 'status', items: items.slice(0, 10) });
@@ -386,15 +429,85 @@ export function studentContent(gladys, sync, { settings = {}, language = 'en' })
   return { ttl_seconds: 600, components };
 }
 
+/**
+ * A one-list widget (`homework`, `grades`, `notebook`): the student, at most
+ * one tile, the list. No refresh button: the summary and timetable widgets
+ * carry one, and every read refreshes all the widgets.
+ *
+ * @param {(student: object, now: Date) => { tile?: object, list: object | null }} build
+ */
+function listContent(gladys, sync, { settings = {}, language = 'en' }, title, build) {
+  const { student, content } = studentOf(gladys, sync, settings, language);
+  if (!student) {
+    return content;
+  }
+  const heading = `${student.name.split(' ')[0]} · ${pick(language, title)}`;
+  const components = [{ type: 'text', variant: 'heading', text: truncate(heading, 40) }];
+  const { tile, list } = build(student, sync.now());
+  if (tile) {
+    components.push(tile);
+  }
+  components.push(list ?? { type: 'text', variant: 'caption', text: T.unavailable });
+  const error = errorItem(sync, language);
+  if (error) {
+    components.push({ type: 'status', items: [error] });
+  }
+  return { ttl_seconds: 600, components };
+}
+
+/** The `homework` widget content. */
+export function homeworkContent(gladys, sync, request) {
+  const language = request.language ?? 'en';
+  return listContent(gladys, sync, request, T.homework, (student, now) => {
+    if (!student.homework) {
+      return { list: null };
+    }
+    const shown = homeworkShown(student, now, sync.config?.homework_days ?? 7);
+    const todo = shown.filter((item) => !item.done).length;
+    return {
+      tile: { type: 'value', label: T.todo, icon: 'book', value: todo },
+      list: homeworkList(shown, now, language),
+    };
+  });
+}
+
+/** The `grades` widget content. */
+export function gradesContent(gladys, sync, request) {
+  const language = request.language ?? 'en';
+  return listContent(gladys, sync, request, T.grades, (student) => {
+    if (!student.grades) {
+      return { list: null };
+    }
+    const average = student.grades.average;
+    return {
+      ...(average !== null &&
+        average !== undefined && {
+          tile: {
+            type: 'value',
+            label: T.average,
+            icon: 'award',
+            value: formatPoints(average),
+            unit: '/20',
+          },
+        }),
+      list: gradesList(student, language),
+    };
+  });
+}
+
+/** The `notebook` widget content. */
+export function notebookContent(gladys, sync, request) {
+  const language = request.language ?? 'en';
+  return listContent(gladys, sync, request, T.notebook, (student) => ({
+    list: student.observations ? notebookList(student, language) : null,
+  }));
+}
+
 /** The `timetable` widget content. */
 export function timetableContent(gladys, sync, { settings = {}, language = 'en' }) {
-  const snapshot = sync.snapshot;
-  if (!snapshot) {
-    return emptyContent(sync, language, T.waiting);
-  }
-  const student = findStudent(gladys, snapshot, settings.student);
+  const { student, content } = studentOf(gladys, sync, settings, language);
   if (!student) {
-    return emptyContent(sync, language, T.noStudent);
+    return content;
   }
   const which = Object.values(DAYS).includes(settings.day) ? settings.day : DAYS.NEXT_SCHOOL_DAY;
   const summary = daySummary(student, which, sync.now());
@@ -479,6 +592,18 @@ export function widgetHandlers(sync, gladys) {
     },
     [WIDGET_KEYS.TIMETABLE]: {
       get: async (request) => timetableContent(gladys, sync, request),
+      action: refresh,
+    },
+    [WIDGET_KEYS.HOMEWORK]: {
+      get: async (request) => homeworkContent(gladys, sync, request),
+      action: refresh,
+    },
+    [WIDGET_KEYS.GRADES]: {
+      get: async (request) => gradesContent(gladys, sync, request),
+      action: refresh,
+    },
+    [WIDGET_KEYS.NOTEBOOK]: {
+      get: async (request) => notebookContent(gladys, sync, request),
       action: refresh,
     },
   };

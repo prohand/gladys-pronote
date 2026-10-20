@@ -123,7 +123,7 @@ test('the list choices of the student widget are the ones the code knows', () =>
     list.options.map((option) => option.value).sort(),
     Object.values(STUDENT_LISTS).sort(),
   );
-  assert.equal(list.default, STUDENT_LISTS.HOMEWORK);
+  assert.equal(list.default, STUDENT_LISTS.NONE);
 });
 
 test('every widget is registered and handled', () => {

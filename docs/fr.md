@@ -29,7 +29,7 @@ Dans Gladys, ouvrez **Intégrations → PRONOTE → Configuration**.
 | Adresse PRONOTE                      | L'adresse de l'espace PRONOTE. La fin (`eleve.html`, `parent.html`) n'est pas nécessaire.                                                                         |
 | Type de compte                       | **Élève** pour un compte élève, **Parent** pour un compte parent (un appareil par enfant).                                                                        |
 | Identifiant / Mot de passe           | Votre identifiant et votre mot de passe PRONOTE.                                                                                                                  |
-| Intervalle de rafraîchissement (min) | Fréquence de lecture de PRONOTE. 15 minutes suffisent ; le serveur est partagé par tout l'établissement.                                                          |
+| Intervalle de rafraîchissement (min) | Fréquence de lecture de PRONOTE. 30 minutes suffisent ; le serveur est partagé par tout l'établissement.                                                          |
 | Horizon des devoirs                  | Nombre de jours de devoirs comptés et listés, à partir du prochain jour de cours (7 par défaut). Pendant les vacances, les jours comptent à partir de la rentrée. |
 | Fuseau horaire de l'établissement    | `Europe/Paris` par défaut. Outre-mer : `Indian/Reunion`, `America/Martinique`, `Pacific/Noumea`…                                                                  |
 | Journaux détaillés                   | À activer pour comprendre un problème, puis à désactiver.                                                                                                         |
@@ -116,23 +116,26 @@ Exemple : _chaque jour de semaine à 07:00 → Obtenir la journée d'un élève
 
 ## Widgets
 
-- **Élève PRONOTE** : moyenne, devoirs à faire, absences, prochain cours, prochain
-  jour de cours, dernière note, messages non lus, et une liste, au choix dans le
-  réglage **Liste** du widget :
-  - **Devoirs** (par défaut) : les devoirs de l'horizon des devoirs, chacun marqué
-    **Fait**, **Non fait**, **Aujourd'hui** ou **Demain**, comme dans PRONOTE ;
-  - **Dernières notes** : les 8 notes les plus récentes, avec la moyenne de la
-    classe ;
-  - **Carnet de correspondance** : les mots des professeurs et de l'établissement
-    (observations, encouragements, défauts de carnet) de la période en cours.
+- **Élève PRONOTE** : le résumé. Moyenne, devoirs à faire, absences, prochain
+  cours, prochain jour de cours (seulement s'il n'est pas déjà le prochain cours),
+  dernière note et messages non lus. Un bouton **Actualiser** relit PRONOTE. Son
+  réglage **Liste** (**Aucune** par défaut) peut ajouter une des listes ci-dessous.
 
-  Ajoutez le widget plusieurs fois pour voir plusieurs listes. Un bouton
-  **Actualiser** relit PRONOTE.
+- **Devoirs PRONOTE** : les devoirs de l'horizon des devoirs, chacun marqué
+  **Fait**, **Non fait**, **Aujourd'hui** ou **Demain**, comme dans PRONOTE, sous
+  une tuile **À faire**.
+
+- **Notes PRONOTE** : la moyenne et les 8 notes les plus récentes, avec la moyenne
+  de la classe.
+
+- **Carnet PRONOTE** : les mots des professeurs et de l'établissement
+  (observations, encouragements, défauts de carnet) de la période en cours.
 
 - **Emploi du temps PRONOTE** : les cours d'aujourd'hui, de demain ou du prochain
   jour de cours, avec les cours annulés et les contrôles signalés.
 
-Les deux affichent la dernière lecture : ouvrir un tableau de bord n'interroge
+Chaque widget a un réglage **Élève** : ajoutez un widget par enfant. Tous
+affichent la dernière lecture : ouvrir un tableau de bord n'interroge
 jamais PRONOTE.
 
 ## Boutons de l'écran de configuration

@@ -141,13 +141,13 @@
         "es": "Intervalo de actualización (min)"
       },
       "description": {
-        "en": "How often PRONOTE is read, in minutes. The server is shared by the whole school: 15 minutes is plenty for grades and homework.",
-        "fr": "Fréquence de lecture de PRONOTE, en minutes. Le serveur est partagé par tout l'établissement : 15 minutes suffisent largement pour les notes et les devoirs.",
-        "de": "Wie oft PRONOTE abgerufen wird, in Minuten. Der Server wird von der ganzen Schule geteilt: 15 Minuten reichen für Noten und Hausaufgaben völlig aus.",
-        "es": "Frecuencia de lectura de PRONOTE, en minutos. El servidor lo comparte todo el centro: 15 minutos bastan para notas y deberes."
+        "en": "How often PRONOTE is read, in minutes. The server is shared by the whole school: 30 minutes is plenty for grades and homework.",
+        "fr": "Fréquence de lecture de PRONOTE, en minutes. Le serveur est partagé par tout l'établissement : 30 minutes suffisent largement pour les notes et les devoirs.",
+        "de": "Wie oft PRONOTE abgerufen wird, in Minuten. Der Server wird von der ganzen Schule geteilt: 30 Minuten reichen für Noten und Hausaufgaben völlig aus.",
+        "es": "Frecuencia de lectura de PRONOTE, en minutos. El servidor lo comparte todo el centro: 30 minutos bastan para notas y deberes."
       },
       "required": false,
-      "default": 15,
+      "default": 30,
       "min": 5,
       "max": 120
     },
@@ -1086,10 +1086,10 @@
         "es": "Alumno PRONOTE"
       },
       "description": {
-        "en": "Average, homework, next lesson, and the homework, last grades or correspondence book.",
-        "fr": "Moyenne, devoirs, prochain cours, et la liste des devoirs, des dernières notes ou du carnet.",
-        "de": "Durchschnitt, Hausaufgaben, nächste Stunde und Liste: Hausaufgaben, Noten oder Mitteilungsheft.",
-        "es": "Media, deberes, próxima clase y la lista de deberes, últimas notas o libreta."
+        "en": "Average, homework, absences, next lesson, last grade. Can also show one list.",
+        "fr": "Moyenne, devoirs, absences, prochain cours, dernière note. Peut aussi montrer une liste.",
+        "de": "Durchschnitt, Hausaufgaben, Fehlzeiten, nächste Stunde, letzte Note. Optional eine Liste.",
+        "es": "Media, deberes, ausencias, próxima clase, última nota. Puede mostrar también una lista."
       },
       "icon": "book-open",
       "settings": [
@@ -1121,14 +1121,23 @@
             "es": "Lista"
           },
           "description": {
-            "en": "What the list of the widget shows. Add the widget several times to see several lists.",
-            "fr": "Ce que montre la liste du widget. Ajoutez le widget plusieurs fois pour voir plusieurs listes.",
-            "de": "Was die Liste des Widgets zeigt. Füge das Widget mehrmals hinzu, um mehrere Listen zu sehen.",
-            "es": "Lo que muestra la lista del widget. Añada el widget varias veces para ver varias listas."
+            "en": "None by default: the Homework, Grades and Correspondence book widgets each show one list.",
+            "fr": "Aucune par défaut : les widgets Devoirs, Notes et Carnet montrent chacun une liste.",
+            "de": "Standard: keine. Die Widgets Hausaufgaben, Noten und Mitteilungsheft zeigen je eine Liste.",
+            "es": "Ninguna por defecto: los widgets Deberes, Notas y Libreta muestran cada uno una lista."
           },
           "required": false,
-          "default": "homework",
+          "default": "none",
           "options": [
+            {
+              "value": "none",
+              "label": {
+                "en": "None (summary only)",
+                "fr": "Aucune (résumé seul)",
+                "de": "Keine (nur Übersicht)",
+                "es": "Ninguna (solo resumen)"
+              }
+            },
             {
               "value": "homework",
               "label": {
@@ -1238,6 +1247,114 @@
         }
       ],
       "action_timeout_seconds": 90
+    },
+    {
+      "key": "homework",
+      "label": {
+        "en": "PRONOTE homework",
+        "fr": "Devoirs PRONOTE",
+        "de": "PRONOTE-Hausaufgaben",
+        "es": "Deberes PRONOTE"
+      },
+      "description": {
+        "en": "The homework to do and done, with how many are left to do.",
+        "fr": "Les devoirs faits et à faire, avec le nombre restant à faire.",
+        "de": "Erledigte und offene Hausaufgaben, mit der Zahl der offenen.",
+        "es": "Los deberes hechos y pendientes, con cuántos quedan."
+      },
+      "icon": "book",
+      "settings": [
+        {
+          "key": "student",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Student",
+            "fr": "Élève",
+            "de": "Schüler",
+            "es": "Alumno"
+          },
+          "description": {
+            "en": "Empty: the first student of the account.",
+            "fr": "Vide : le premier élève du compte.",
+            "de": "Leer: der erste Schüler des Kontos.",
+            "es": "Vacío: el primer alumno de la cuenta."
+          },
+          "required": false
+        }
+      ]
+    },
+    {
+      "key": "grades",
+      "label": {
+        "en": "PRONOTE grades",
+        "fr": "Notes PRONOTE",
+        "de": "PRONOTE-Noten",
+        "es": "Notas PRONOTE"
+      },
+      "description": {
+        "en": "The average and the 8 last grades, with the class average.",
+        "fr": "La moyenne et les 8 dernières notes, avec la moyenne de la classe.",
+        "de": "Der Durchschnitt und die 8 letzten Noten, mit dem Klassendurchschnitt.",
+        "es": "La media y las 8 últimas notas, con la media de la clase."
+      },
+      "icon": "award",
+      "settings": [
+        {
+          "key": "student",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Student",
+            "fr": "Élève",
+            "de": "Schüler",
+            "es": "Alumno"
+          },
+          "description": {
+            "en": "Empty: the first student of the account.",
+            "fr": "Vide : le premier élève du compte.",
+            "de": "Leer: der erste Schüler des Kontos.",
+            "es": "Vacío: el primer alumno de la cuenta."
+          },
+          "required": false
+        }
+      ]
+    },
+    {
+      "key": "notebook",
+      "label": {
+        "en": "PRONOTE correspondence book",
+        "fr": "Carnet PRONOTE",
+        "de": "PRONOTE-Mitteilungsheft",
+        "es": "Libreta PRONOTE"
+      },
+      "description": {
+        "en": "The notes of the correspondence book: observations, praise, book issues.",
+        "fr": "Les mots du carnet de correspondance : observations, encouragements, défauts.",
+        "de": "Die Notizen des Mitteilungshefts: Bemerkungen, Lob, Heftmängel.",
+        "es": "Las notas de la libreta: observaciones, ánimos, faltas."
+      },
+      "icon": "edit-3",
+      "settings": [
+        {
+          "key": "student",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Student",
+            "fr": "Élève",
+            "de": "Schüler",
+            "es": "Alumno"
+          },
+          "description": {
+            "en": "Empty: the first student of the account.",
+            "fr": "Vide : le premier élève du compte.",
+            "de": "Leer: der erste Schüler des Kontos.",
+            "es": "Vacío: el primer alumno de la cuenta."
+          },
+          "required": false
+        }
+      ]
     }
   ]
 }

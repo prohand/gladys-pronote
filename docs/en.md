@@ -27,7 +27,7 @@ In Gladys, open **Integrations → PRONOTE → Configuration**.
 | PRONOTE address         | The address of the PRONOTE space. The end (`eleve.html`, `parent.html`) is not needed.                                                          |
 | Kind of account         | **Student** for a student account, **Parent** for a parent account (one device per child).                                                      |
 | Username / Password     | Your PRONOTE username and password.                                                                                                             |
-| Refresh interval (min)  | How often PRONOTE is read. 15 minutes is plenty; the server is shared by the whole school.                                                      |
+| Refresh interval (min)  | How often PRONOTE is read. 30 minutes is plenty; the server is shared by the whole school.                                                      |
 | Homework horizon        | How many days of homework are counted and listed, from the next school day (7 by default). During the holidays, the days count from the return. |
 | Time zone of the school | `Europe/Paris` by default. Overseas schools: `Indian/Reunion`, `America/Martinique`, `Pacific/Noumea`…                                          |
 | Detailed logs           | Turn on to understand a problem, then off again.                                                                                                |
@@ -105,22 +105,25 @@ Say "First lesson at {{first_lesson}}. Homework: {{homework_text}}"_.
 
 ## Widgets
 
-- **PRONOTE student**: average, homework to do, absences, the next lesson, the next
-  school day, the last grade, the unread messages, and one list, chosen in the
-  widget's **List** setting:
-  - **Homework** (default): the homework of the homework horizon, each marked
-    **Done**, **Not done**, **Today** or **Tomorrow**, as in PRONOTE;
-  - **Last grades**: the 8 most recent grades, with the class average;
-  - **Correspondence book**: the notes of the teachers and the school
-    (observations, encouragements, book issues) of the current period.
+- **PRONOTE student**: the summary. Average, homework to do, absences, the next
+  lesson, the next school day (only when it is not already the next lesson), the
+  last grade and the unread messages. A **Refresh** button reads PRONOTE now. Its
+  **List** setting (**None** by default) can add one of the lists below.
 
-  Add the widget several times to see several lists. A **Refresh** button reads
-  PRONOTE now.
+- **PRONOTE homework**: the homework of the homework horizon, each marked **Done**,
+  **Not done**, **Today** or **Tomorrow**, as in PRONOTE, under a **To do** tile.
+
+- **PRONOTE grades**: the average and the 8 most recent grades, with the class
+  average.
+
+- **PRONOTE correspondence book**: the notes of the teachers and the school
+  (observations, encouragements, book issues) of the current period.
 
 - **PRONOTE timetable**: the lessons of today, tomorrow or the next school day, with
   canceled lessons and tests flagged.
 
-Both show the last read: opening a dashboard never calls PRONOTE.
+Each widget has a **Student** setting: add a widget once per child. All show the
+last read: opening a dashboard never calls PRONOTE.
 
 ## Buttons of the Configuration screen
 

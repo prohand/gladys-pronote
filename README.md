@@ -25,7 +25,7 @@ User documentation: [English](docs/en.md) · [Français](docs/fr.md) ·
 | Device for the account | Unread messages                                                                                                              |
 | Scene triggers         | `new_grade`, `new_homework`, `lesson_canceled`, `new_absence`                                                                |
 | Scene actions          | `refresh` (read now), `day_summary` (lessons and homework of a day, ready for a TTS)                                         |
-| Dashboard widgets      | `student` (a student at a glance), `timetable` (the lessons of a day)                                                        |
+| Dashboard widgets      | `student` (summary), `homework`, `grades`, `notebook` (one list each), `timetable` (a day)                                   |
 | Configuration buttons  | Test the connection, log in with a QR code (ENT accounts), forget the saved session                                          |
 | Languages              | English, French, German, Spanish                                                                                             |
 | Transport              | `cloud` (the PRONOTE server is on the internet)                                                                              |
@@ -38,7 +38,7 @@ Requires **Gladys ≥ 5.1.0** (scene and widget declarations).
   bound to a device id generated once — the way the mobile app stays logged in),
   the username and password when there is none, or a QR code for the accounts
   that log in through an ENT. The token is saved in `/data/session.json`.
-- **Reading**: on the integration's own timer (15 minutes by default), one pass
+- **Reading**: on the integration's own timer (30 minutes by default), one pass
   over every student: grades of the current period, homework of the next three
   weeks, timetable of the next eight days, absences and delays, unread messages.
 - **Publishing**: devices when the list of students changes, states through
