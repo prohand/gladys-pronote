@@ -28,7 +28,7 @@ En Gladys, abra **Integraciones → PRONOTE → Configuración**.
 | Dirección de PRONOTE             | La dirección del espacio PRONOTE. El final (`eleve.html`, `parent.html`) no es necesario.                                                    |
 | Tipo de cuenta                   | **Alumno** para una cuenta de alumno, **Padres** para una cuenta de padres (un dispositivo por hijo).                                        |
 | Usuario / Contraseña             | Su usuario y su contraseña de PRONOTE.                                                                                                       |
-| Intervalo de actualización (min) | Frecuencia de lectura de PRONOTE. Bastan 15 minutos; el servidor lo comparte todo el centro.                                                 |
+| Intervalo de actualización (min) | Frecuencia de lectura de PRONOTE. Bastan 30 minutos; el servidor lo comparte todo el centro.                                                 |
 | Horizonte de deberes             | Cuántos días de deberes se cuentan y listan, desde el próximo día de clase (7 por defecto). En vacaciones, los días cuentan desde la vuelta. |
 | Zona horaria del centro          | `Europe/Paris` por defecto. Ultramar: `Indian/Reunion`, `America/Martinique`, `Pacific/Noumea`…                                              |
 | Registros detallados             | Actívelo para entender un problema y desactívelo después.                                                                                    |
@@ -112,22 +112,26 @@ de clase) → Decir «Primera clase a las {{first_lesson}}. Deberes:
 
 ## Widgets
 
-- **Alumno PRONOTE**: media, deberes pendientes, ausencias, próxima clase, próximo
-  día de clase, última nota, mensajes no leídos y una lista, a elegir en el ajuste
-  **Lista** del widget:
-  - **Deberes** (por defecto): los deberes del horizonte de deberes, cada uno
-    marcado **Hecho**, **Pendiente**, **Hoy** o **Mañana**, como en PRONOTE;
-  - **Últimas notas**: las 8 notas más recientes, con la media de la clase;
-  - **Libreta de correspondencia**: las notas de los profesores y del centro
-    (observaciones, ánimos, faltas en la libreta) del periodo en curso.
+- **Alumno PRONOTE**: el resumen. Media, deberes pendientes, ausencias, próxima
+  clase, próximo día de clase (solo si no es ya la próxima clase), última nota y
+  mensajes no leídos. Un botón **Actualizar** lee PRONOTE al momento. Su ajuste
+  **Lista** (**Ninguna** por defecto) puede añadir una de las listas siguientes.
 
-  Añada el widget varias veces para ver varias listas. Un botón **Actualizar**
-  lee PRONOTE al momento.
+- **Deberes PRONOTE**: los deberes del horizonte de deberes, cada uno marcado
+  **Hecho**, **Pendiente**, **Hoy** o **Mañana**, como en PRONOTE, bajo una
+  ficha **Pendientes**.
+
+- **Notas PRONOTE**: la media y las 8 notas más recientes, con la media de la
+  clase.
+
+- **Libreta PRONOTE**: las notas de los profesores y del centro (observaciones,
+  ánimos, faltas en la libreta) del periodo en curso.
 
 - **Horario PRONOTE**: las clases de hoy, mañana o el próximo día de clase, con las
   clases canceladas y los exámenes señalados.
 
-Ambos muestran la última lectura: abrir un panel nunca consulta PRONOTE.
+Cada widget tiene un ajuste **Alumno**: añada un widget por hijo. Todos muestran
+la última lectura: abrir un panel nunca consulta PRONOTE.
 
 ## Botones de la pantalla de configuración
 

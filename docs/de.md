@@ -28,7 +28,7 @@ Gefundene als Gladys-Geräte, Szenenauslöser und Dashboard-Widgets.
 | PRONOTE-Adresse                | Die Adresse des PRONOTE-Bereichs. Das Ende (`eleve.html`, `parent.html`) wird nicht benötigt.                                                    |
 | Kontoart                       | **Schüler** für ein Schülerkonto, **Eltern** für ein Elternkonto (ein Gerät pro Kind).                                                           |
 | Benutzername / Passwort        | Dein PRONOTE-Benutzername und -Passwort.                                                                                                         |
-| Aktualisierungsintervall (min) | Wie oft PRONOTE abgerufen wird. 15 Minuten reichen; der Server wird von der ganzen Schule geteilt.                                               |
+| Aktualisierungsintervall (min) | Wie oft PRONOTE abgerufen wird. 30 Minuten reichen; der Server wird von der ganzen Schule geteilt.                                               |
 | Hausaufgaben-Zeitraum          | Wie viele Tage Hausaufgaben gezählt und aufgelistet werden, ab dem nächsten Schultag (Standard 7). In den Ferien zählen die Tage ab Schulbeginn. |
 | Zeitzone der Schule            | Standard `Europe/Paris`. Überseegebiete: `Indian/Reunion`, `America/Martinique`, `Pacific/Noumea`…                                               |
 | Detaillierte Protokolle        | Zum Untersuchen eines Problems einschalten, danach wieder aus.                                                                                   |
@@ -109,23 +109,27 @@ Schultag) → Sagen „Erste Stunde um {{first_lesson}}. Hausaufgaben:
 
 ## Widgets
 
-- **PRONOTE-Schüler**: Durchschnitt, offene Hausaufgaben, Fehlzeiten, nächste
-  Stunde, nächster Schultag, letzte Note, ungelesene Nachrichten und eine Liste,
-  wählbar in der Einstellung **Liste** des Widgets:
-  - **Hausaufgaben** (Standard): die Hausaufgaben des Hausaufgaben-Zeitraums,
-    jeweils als **Erledigt**, **Offen**, **Heute** oder **Morgen** markiert, wie
-    in PRONOTE;
-  - **Letzte Noten**: die 8 neuesten Noten, mit dem Klassendurchschnitt;
-  - **Mitteilungsheft**: die Notizen der Lehrkräfte und der Schule (Bemerkungen,
-    Lob, Heftmängel) des laufenden Zeitraums.
+- **PRONOTE-Schüler**: die Übersicht. Durchschnitt, offene Hausaufgaben,
+  Fehlzeiten, nächste Stunde, nächster Schultag (nur wenn er nicht schon die
+  nächste Stunde ist), letzte Note und ungelesene Nachrichten. Eine Schaltfläche
+  **Aktualisieren** ruft PRONOTE sofort ab. Die Einstellung **Liste** (Standard:
+  **Keine**) kann eine der folgenden Listen hinzufügen.
 
-  Füge das Widget mehrmals hinzu, um mehrere Listen zu sehen. Eine Schaltfläche
-  **Aktualisieren** ruft PRONOTE sofort ab.
+- **PRONOTE-Hausaufgaben**: die Hausaufgaben des Hausaufgaben-Zeitraums, jeweils
+  als **Erledigt**, **Offen**, **Heute** oder **Morgen** markiert, wie in PRONOTE,
+  unter einer Kachel **Offen**.
+
+- **PRONOTE-Noten**: der Durchschnitt und die 8 neuesten Noten, mit dem
+  Klassendurchschnitt.
+
+- **PRONOTE-Mitteilungsheft**: die Notizen der Lehrkräfte und der Schule
+  (Bemerkungen, Lob, Heftmängel) des laufenden Zeitraums.
 
 - **PRONOTE-Stundenplan**: die Stunden von heute, morgen oder dem nächsten
   Schultag, mit Ausfällen und Tests markiert.
 
-Beide zeigen den letzten Abruf: Das Öffnen eines Dashboards fragt PRONOTE nie ab.
+Jedes Widget hat eine Einstellung **Schüler**: ein Widget pro Kind hinzufügen.
+Alle zeigen den letzten Abruf: Das Öffnen eines Dashboards fragt PRONOTE nie ab.
 
 ## Schaltflächen der Konfiguration
 

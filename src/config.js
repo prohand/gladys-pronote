@@ -24,7 +24,7 @@ export const DEFAULT_CONFIG = {
   // Minutes between two reads of PRONOTE. A school server is shared by the
   // whole school: reading it more often than every few minutes brings nothing
   // (grades and homework are typed by hand) and gets an IP rate-limited.
-  refresh_interval: 15,
+  refresh_interval: 30,
   // How many days ahead the homework is read.
   homework_days: 7,
   // PRONOTE writes local times without a zone: they are read in this one.

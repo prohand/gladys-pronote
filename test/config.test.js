@@ -16,7 +16,7 @@ test('numbers typed as strings are numbers, kept inside their bounds', () => {
   assert.equal(config.refresh_interval, 30);
   assert.equal(config.homework_days, 21);
   assert.equal(normalizeConfig({ refresh_interval: 1 }).refresh_interval, 5);
-  assert.equal(normalizeConfig({ refresh_interval: 'abc' }).refresh_interval, 15);
+  assert.equal(normalizeConfig({ refresh_interval: 'abc' }).refresh_interval, 30);
 });
 
 test('an empty field from the form falls back to its default', () => {

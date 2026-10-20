@@ -6,6 +6,16 @@ All notable changes to this integration are documented here. The format follows
 
 ## [Unreleased]
 
+### Added
+
+- Three widgets with one list each: **PRONOTE homework** (with a "To do" tile), **PRONOTE grades** (with the average) and **PRONOTE correspondence book**. A dashboard can spread the information over small cards instead of adding the student widget several times.
+
+### Changed
+
+- The student widget is now a summary: its **List** setting has a new **None** choice, the default. Choose a list there to get the 0.0.7 widget back.
+- The student widget no longer shows "Next school day" when the next lesson already is the start of that day (it said the same thing twice).
+- The default refresh interval is 30 minutes instead of 15: grades and homework do not change faster, and PRONOTE gets fewer requests. An interval already set is kept.
+
 ## [0.0.7] - 2026-10-20
 
 ### Added
