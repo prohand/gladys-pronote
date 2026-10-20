@@ -6,6 +6,11 @@ All notable changes to this integration are documented here. The format follows
 
 ## [Unreleased]
 
+### Fixed
+
+- Parent accounts on PRONOTE 2026.2: "AccessDeniedError" on the grades, then "The PRONOTE session expired" at every read, until PRONOTE suspended the IP address. The bundled pawnote did not name the selected child in its requests, as PRONOTE's own website does; PRONOTE refused the page and closed the session. The integration now patches pawnote at install time to send the child with every request of a parent account. This also gives each child of a multi-child parent account their own grades, homework and absences.
+- A session PRONOTE closes during the read that opened it is no longer opened again at once: each read logged in twice, and the logins added up to an IP suspension. The status now says that PRONOTE closed the session, and the next read waits one hour, like after a suspension.
+
 ## [0.0.5] - 2026-10-19
 
 ### Fixed

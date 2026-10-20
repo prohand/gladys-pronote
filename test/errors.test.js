@@ -44,6 +44,7 @@ test('every code has a message in every language', () => {
       rate_limited: 'RateLimitedError',
       unavailable: 'BusyPageError',
       session_expired: 'SessionExpiredError',
+      session_closed: 'SessionClosedError',
       access_denied: 'AccessDeniedError',
       unknown: 'Error',
     }[code];

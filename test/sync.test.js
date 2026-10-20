@@ -177,6 +177,25 @@ test('a suspended IP address is a failed read, and nobody but the timer asks aga
   assert.equal((await sync.sync({ fireEvents: false })).ok, true);
 });
 
+test('a session PRONOTE closes right after the login is one login, then an hour of rest', async () => {
+  const { gladys, sync, api } = await integration();
+  // What a PRONOTE 2026.2 server did to a parent account: the grades refused,
+  // then the session gone.
+  api.failures.gradesOverview = 'AccessDeniedError';
+  api.failures.assignmentsFromIntervals = 'SessionExpiredError';
+
+  const result = await sync.restart();
+  assert.equal(result.ok, false);
+  assert.equal(result.error.code, 'session_closed');
+  assert.match(gladys.fake.connectionStatus.message.fr, /fermé la session/);
+  const logins = api.calls.filter(([name]) => name.startsWith('login'));
+  assert.equal(logins.length, 1, 'no second login at once');
+
+  const calls = api.calls.length;
+  assert.equal((await sync.sync({ fireEvents: false })).error.code, 'session_closed');
+  assert.equal(api.calls.length, calls, 'the widget button waits too');
+});
+
 test('two reads at once are one read', async () => {
   const { sync, api } = await integration();
   await Promise.all([sync.sync(), sync.sync()]);

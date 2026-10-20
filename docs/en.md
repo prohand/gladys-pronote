@@ -121,22 +121,19 @@ Both show the last read: opening a dashboard never calls PRONOTE.
 
 ## Troubleshooting
 
-| Message                                     | What to do                                                                                                                                                            |
-| ------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| PRONOTE refused the username or password    | Check them in the PRONOTE website. Reading is paused until you save the configuration or test the connection.                                                         |
-| PRONOTE asks to set up the account security | Log in once in the PRONOTE app or website to finish it (new password, PIN), then use the QR code login.                                                               |
-| The IP address was suspended                | Too many failed logins or requests: the next read waits an hour, and the Refresh button and the scene action wait too. Do not press "Test the connection" until then. |
-| The server cannot be reached                | Check the address. A busy server is tried again at the next read.                                                                                                     |
+| Message                                         | What to do                                                                                                                                                                                                      |
+| ----------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| PRONOTE refused the username or password        | Check them in the PRONOTE website. Reading is paused until you save the configuration or test the connection.                                                                                                   |
+| PRONOTE asks to set up the account security     | Log in once in the PRONOTE app or website to finish it (new password, PIN), then use the QR code login.                                                                                                         |
+| The IP address was suspended                    | Too many failed logins or requests: the next read waits an hour, and the Refresh button and the scene action wait too. Do not press "Test the connection" until then.                                           |
+| PRONOTE ended the session right after the login | PRONOTE refused a page to this account and closed the session. The next read waits an hour, like after a suspension, so the logins do not pile up. Send the integration logs to the developer if it comes back. |
+| The server cannot be reached                    | Check the address. A busy server is tried again at the next read.                                                                                                                                               |
 
 Turn on **Detailed logs** to see each step in the integration logs. Passwords and
 tokens are never logged.
 
 ## Known limits
 
-- **Parent accounts with several children**: the timetable is read for each
-  child, but for the grades, homework and absences PRONOTE may answer for the
-  child it selects by default. If two children show the same grades, use each
-  child's student account instead.
 - **Teacher accounts** are not supported.
 - PRONOTE has no notifications: news are found at each read, so a new grade shows
   up within the refresh interval.

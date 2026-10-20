@@ -126,22 +126,19 @@ Beide zeigen den letzten Abruf: Das Öffnen eines Dashboards fragt PRONOTE nie a
 
 ## Fehlerbehebung
 
-| Meldung                                              | Was tun                                                                                                                                                                                             |
-| ---------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| PRONOTE hat Benutzername oder Passwort abgelehnt     | Prüfe sie auf der PRONOTE-Website. Der Abruf pausiert, bis du die Konfiguration speicherst oder die Verbindung testest.                                                                             |
-| PRONOTE verlangt die Einrichtung der Kontosicherheit | Melde dich einmal in der PRONOTE-App oder -Website an, um sie abzuschließen (neues Passwort, PIN), und nutze dann den QR-Code.                                                                      |
-| Die IP-Adresse wurde gesperrt                        | Zu viele fehlgeschlagene Anmeldungen oder Anfragen: Der nächste Abruf wartet eine Stunde, die Schaltfläche Aktualisieren und die Szenenaktion ebenfalls. Nutze bis dahin nicht „Verbindung testen“. |
-| Der Server ist nicht erreichbar                      | Prüfe die Adresse. Ein ausgelasteter Server wird beim nächsten Abruf erneut versucht.                                                                                                               |
+| Meldung                                                   | Was tun                                                                                                                                                                                                                                                              |
+| --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| PRONOTE hat Benutzername oder Passwort abgelehnt          | Prüfe sie auf der PRONOTE-Website. Der Abruf pausiert, bis du die Konfiguration speicherst oder die Verbindung testest.                                                                                                                                              |
+| PRONOTE verlangt die Einrichtung der Kontosicherheit      | Melde dich einmal in der PRONOTE-App oder -Website an, um sie abzuschließen (neues Passwort, PIN), und nutze dann den QR-Code.                                                                                                                                       |
+| Die IP-Adresse wurde gesperrt                             | Zu viele fehlgeschlagene Anmeldungen oder Anfragen: Der nächste Abruf wartet eine Stunde, die Schaltfläche Aktualisieren und die Szenenaktion ebenfalls. Nutze bis dahin nicht „Verbindung testen“.                                                                  |
+| PRONOTE hat die Sitzung direkt nach der Anmeldung beendet | PRONOTE hat diesem Konto eine Seite verweigert und die Sitzung geschlossen. Der nächste Abruf wartet eine Stunde, wie nach einer Sperre, damit sich die Anmeldungen nicht häufen. Schicke die Protokolle der Integration an den Entwickler, wenn es wieder passiert. |
+| Der Server ist nicht erreichbar                           | Prüfe die Adresse. Ein ausgelasteter Server wird beim nächsten Abruf erneut versucht.                                                                                                                                                                                |
 
 Schalte **Detaillierte Protokolle** ein, um jeden Schritt in den Protokollen der
 Integration zu sehen. Passwörter und Tokens werden nie protokolliert.
 
 ## Bekannte Einschränkungen
 
-- **Elternkonten mit mehreren Kindern**: Der Stundenplan wird für jedes Kind
-  gelesen, aber für Noten, Hausaufgaben und Fehlzeiten kann PRONOTE für das
-  standardmäßig ausgewählte Kind antworten. Zeigen zwei Kinder dieselben Noten,
-  nutze besser das Schülerkonto jedes Kindes.
 - **Lehrkräftekonten** werden nicht unterstützt.
 - PRONOTE hat keine Benachrichtigungen: Neuigkeiten werden bei jedem Abruf gefunden,
   eine neue Note erscheint also innerhalb des Aktualisierungsintervalls.

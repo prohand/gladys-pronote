@@ -59,7 +59,7 @@ src/capabilities/scenes.js   scene trigger keys + scene action handlers
 src/capabilities/widgets.js  dashboard widgets
 gladys-assistant-integration.json  manifest
 docs/{en,fr,de,es}.md        user documentation, re-hosted by Gladys
-scripts/patch-pawnote.js     postinstall: teaches pawnote the 2026.2 login challenge
+scripts/patch-pawnote.js     postinstall: teaches pawnote PRONOTE 2026.2 (login challenge, parent child)
 test/                        node --test, fake pawnote + the SDK's fake Gladys
 ```
 
@@ -87,12 +87,16 @@ test/                        node --test, fake pawnote + the SDK's fake Gladys
 - **The container rootfs is read-only.** Write only under `/data`. Never log
   passwords, tokens or the QR code content.
 - **pawnote is patched at install** (`postinstall` → `scripts/patch-pawnote.js`):
-  PRONOTE 2026.2 changed the login challenge and pawnote 1.6.2 does not know it.
-  `npm install --ignore-scripts` leaves pawnote unpatched; `test/challenge.test.js`
-  then fails. The Dockerfile copies `scripts/` before `npm ci` for that reason.
-- **Parent accounts**: pawnote 1.6 sends the selected child only for the
-  timetable; grades, homework and absences of a multi-child parent account follow
-  what PRONOTE answers by default. Documented in the docs ("Known limits").
+  PRONOTE 2026.2 changed the login challenge, and refuses a parent account's pages
+  when the request does not name the child (`Signature.membre`); pawnote 1.6.2
+  does neither. `npm install --ignore-scripts` leaves pawnote unpatched;
+  `test/challenge.test.js` and `test/member.test.js` then fail. The Dockerfile
+  copies `scripts/` before `npm ci` for that reason.
+- **Parent accounts**: `api.use(handle, child)` before each child's reads; the
+  patch sends that child with every request.
+- **A session that expires during the read that opened it was closed by PRONOTE**
+  (`SessionClosedError`): it is not opened again at once, and the loop waits an
+  hour. Only the session of an earlier read is logged in again and retried.
 
 ### Manifest
 

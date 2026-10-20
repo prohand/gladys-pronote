@@ -20,6 +20,7 @@ export const ERROR_CODES = {
   RATE_LIMITED: 'rate_limited',
   UNAVAILABLE: 'unavailable',
   SESSION_EXPIRED: 'session_expired',
+  SESSION_CLOSED: 'session_closed',
   ACCESS_DENIED: 'access_denied',
   UNKNOWN: 'unknown',
 };
@@ -73,6 +74,12 @@ const MESSAGES = {
     de: 'Die PRONOTE-Sitzung ist abgelaufen; sie wird beim nächsten Abruf neu geöffnet.',
     es: 'La sesión de PRONOTE caducó; se vuelve a abrir en la próxima lectura.',
   },
+  [ERROR_CODES.SESSION_CLOSED]: {
+    en: 'PRONOTE ended the session right after the login, often after refusing a page to this account. The next read waits one hour; avoid refreshing until then.',
+    fr: 'PRONOTE a fermé la session juste après la connexion, souvent après avoir refusé une page à ce compte. La prochaine lecture attend une heure ; évitez d’actualiser d’ici là.',
+    de: 'PRONOTE hat die Sitzung direkt nach der Anmeldung beendet, oft nachdem eine Seite für dieses Konto verweigert wurde. Der nächste Abruf wartet eine Stunde; aktualisiere bis dahin nicht.',
+    es: 'PRONOTE cerró la sesión justo después de iniciarla, a menudo tras denegar una página a esta cuenta. La próxima lectura espera una hora; evite actualizar hasta entonces.',
+  },
   [ERROR_CODES.ACCESS_DENIED]: {
     en: 'PRONOTE denied access to this page for this account.',
     fr: 'PRONOTE a refusé l’accès à cette page pour ce compte.',
@@ -98,6 +105,7 @@ const BY_NAME = {
   BusyPageError: [ERROR_CODES.UNAVAILABLE, true],
   PageUnavailableError: [ERROR_CODES.UNAVAILABLE, true],
   SessionExpiredError: [ERROR_CODES.SESSION_EXPIRED, true],
+  SessionClosedError: [ERROR_CODES.SESSION_CLOSED, true],
   AccessDeniedError: [ERROR_CODES.ACCESS_DENIED, false],
   NotConfiguredError: [ERROR_CODES.NOT_CONFIGURED, false],
 };
@@ -110,6 +118,18 @@ export class NotConfiguredError extends Error {
   constructor() {
     super('No PRONOTE credentials nor saved session');
     this.name = 'NotConfiguredError';
+  }
+}
+
+/**
+ * Thrown when the session ends during the read that opened it: not a timeout,
+ * PRONOTE closed it, and logging in again at once would fail the same way.
+ */
+export class SessionClosedError extends Error {
+  /** @param {Error} cause the SessionExpiredError pawnote threw */
+  constructor(cause) {
+    super('PRONOTE ended the session right after the login', { cause });
+    this.name = 'SessionClosedError';
   }
 }
 

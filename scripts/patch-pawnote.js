@@ -1,5 +1,8 @@
 // -----------------------------------------------------------------------------
-// Teach the installed pawnote the login challenge of PRONOTE 2026.2.
+// Teach the installed pawnote what PRONOTE 2026.2 expects: the new login
+// challenge, and the selected child in every request of a parent account.
+//
+// 1. The login challenge.
 //
 // At login, PRONOTE sends a challenge that only the right password (or token)
 // can answer. Up to 2026.1 the client decrypted it with the key derived from
@@ -15,6 +18,16 @@
 // installed pawnote. Servers older than 2026.2 keep the old answer.
 // test/challenge.test.js logs in against a fake 2026.2 server: it fails if the
 // installed pawnote cannot answer, patched or not.
+//
+// 2. The child of a parent account. PRONOTE's web client names the selected
+// child in the signature of every request of the parent space
+// (`Signature: { onglet, membre: { N, G } }`); pawnote 1.6.2 only sends the tab.
+// A PRONOTE 2026.2 server answers "Accès refusé" to the grades of a parent
+// account without it, then ends the session: every read logged in again and
+// failed the same way, until PRONOTE suspended the IP address. The patch adds
+// `membre` (the resource chosen with `use()`) to the signature of a parent
+// account's requests, before pawnote encrypts them. test/member.test.js checks
+// what the installed pawnote sends.
 // -----------------------------------------------------------------------------
 
 import { readFileSync, writeFileSync } from 'node:fs';
@@ -56,6 +69,45 @@ export function patchSource(source) {
   };
 }
 
+/** Left in the patched code by the second patch. */
+export const MEMBER_MARKER = '/*gladys-pronote:parent-member*/';
+
+// The start of RequestFN.process(), before the order number, the compression
+// and the encryption: `this.data` is still the plain request.
+const REQUEST_PROCESS = /process\(\)\{(?=this\.session\.information\.order\+\+;)/;
+
+/** The signature of a parent account's request gets the selected child (AccountKind.PARENT = 7). */
+const ADD_MEMBER =
+  '((s,d)=>{const r=s.userResource,g=d&&(d.Signature||d._Signature_);' +
+  'if(s.information.accountKind===7&&r&&r.id!==undefined&&g&&typeof g==="object"&&g.onglet!==undefined&&!g.membre)' +
+  'g.membre={N:r.id,G:r.kind??4}})(this.session,this.data);';
+
+/**
+ * Send the selected child in the signature of a parent account's requests.
+ *
+ * @param {string} source a pawnote dist file
+ * @returns {{ source: string, status: 'patched' | 'already' | 'not-found' }}
+ */
+export function patchMember(source) {
+  if (source.includes(MEMBER_MARKER)) {
+    return { source, status: 'already' };
+  }
+  const match = REQUEST_PROCESS.exec(source);
+  if (!match) {
+    return { source, status: 'not-found' };
+  }
+  const end = match.index + match[0].length;
+  return {
+    source: `${source.slice(0, end)}${MEMBER_MARKER}${ADD_MEMBER}${source.slice(end)}`,
+    status: 'patched',
+  };
+}
+
+const PATCHES = [
+  ['login challenge', patchSource],
+  ['parent child', patchMember],
+];
+
 /** Patch both bundles of the installed pawnote (ESM and CommonJS). */
 export function patchInstalledPawnote() {
   let dist;
@@ -64,24 +116,29 @@ export function patchInstalledPawnote() {
   } catch {
     return [{ file: 'pawnote', status: 'not-installed' }];
   }
-  return ['index.mjs', 'index.js'].map((name) => {
+  return ['index.mjs', 'index.js'].flatMap((name) => {
     const file = join(dist, name);
-    const result = patchSource(readFileSync(file, 'utf8'));
-    if (result.status === 'patched') {
-      writeFileSync(file, result.source);
+    let source = readFileSync(file, 'utf8');
+    const results = PATCHES.map(([patch, apply]) => {
+      const result = apply(source);
+      source = result.source;
+      return { file, patch, status: result.status };
+    });
+    if (results.some((result) => result.status === 'patched')) {
+      writeFileSync(file, source);
     }
-    return { file, status: result.status };
+    return results;
   });
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  for (const { file, status } of patchInstalledPawnote()) {
+  for (const { file, patch = '', status } of patchInstalledPawnote()) {
     if (status === 'not-found' || status === 'not-installed') {
-      // Not fatal: a newer pawnote may know the new challenge itself, and the
-      // test suite tells whether it does.
-      console.warn(`patch-pawnote: ${file}: login challenge code not found, left as is`);
+      // Not fatal: a newer pawnote may do it itself, and the test suite tells
+      // whether it does.
+      console.warn(`patch-pawnote: ${file}: ${patch || 'pawnote'} code not found, left as is`);
     } else {
-      console.log(`patch-pawnote: ${file}: ${status}`);
+      console.log(`patch-pawnote: ${file}: ${patch}: ${status}`);
     }
   }
 }

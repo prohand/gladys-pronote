@@ -21,10 +21,11 @@
 // how PRONOTE suspends the IP address of the whole house. Saving the
 // configuration, "Test the connection" or a QR code login start it again.
 //
-// When PRONOTE suspended the IP address or asked to slow down, the next read
-// waits an hour, and the widget button and the "read now" scene action answer
-// with the last error instead of calling PRONOTE: every request made during a
-// suspension can extend it. Only the explicit buttons of the Configuration
+// When PRONOTE suspended the IP address, asked to slow down, or closed the
+// session right after the login (every new try is one more login, and those
+// lead to a suspension), the next read waits an hour, and the widget button and
+// the "read now" scene action answer with the last error instead of calling
+// PRONOTE: every request made during a suspension can extend it. Only the explicit buttons of the Configuration
 // screen (through `restart`) try before the hour is over.
 // -----------------------------------------------------------------------------
 
@@ -46,7 +47,11 @@ const STATE_HEARTBEAT_MS = 60 * 60 * 1000;
 
 /** The pause after PRONOTE asked to slow down or suspended the IP address. */
 const SLOW_DOWN_MS = 60 * 60 * 1000;
-const SLOW_DOWN_CODES = [ERROR_CODES.RATE_LIMITED, ERROR_CODES.SUSPENDED_IP];
+const SLOW_DOWN_CODES = [
+  ERROR_CODES.RATE_LIMITED,
+  ERROR_CODES.SUSPENDED_IP,
+  ERROR_CODES.SESSION_CLOSED,
+];
 
 export class PronoteSync {
   /**
