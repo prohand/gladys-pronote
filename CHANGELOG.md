@@ -6,6 +6,8 @@ All notable changes to this integration are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.0.7] - 2026-10-20
+
 ### Added
 
 - The student widget has a **List** setting: the homework (default), the last 8 grades with the class average, or the correspondence book. Add the widget several times to see several lists.
@@ -61,7 +63,8 @@ All notable changes to this integration are documented here. The format follows
 - Configuration buttons: test the connection, log in with a QR code, forget the saved session.
 - Texts in English, French, German and Spanish (configuration screen, messages, widgets, documentation).
 
-[Unreleased]: https://github.com/prohand/gladys-pronote/compare/v0.0.6...HEAD
+[Unreleased]: https://github.com/prohand/gladys-pronote/compare/v0.0.7...HEAD
+[0.0.7]: https://github.com/prohand/gladys-pronote/compare/v0.0.6...v0.0.7
 [0.0.6]: https://github.com/prohand/gladys-pronote/compare/v0.0.5...v0.0.6
 [0.0.5]: https://github.com/prohand/gladys-pronote/compare/v0.0.4...v0.0.5
 [0.0.4]: https://github.com/prohand/gladys-pronote/compare/v0.0.3...v0.0.4
