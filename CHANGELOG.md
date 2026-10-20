@@ -6,6 +6,8 @@ All notable changes to this integration are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.0.6] - 2026-10-20
+
 ### Fixed
 
 - Parent accounts on PRONOTE 2026.2: "AccessDeniedError" on the grades, then "The PRONOTE session expired" at every read, until PRONOTE suspended the IP address. The bundled pawnote did not name the selected child in its requests, as PRONOTE's own website does; PRONOTE refused the page and closed the session. The integration now patches pawnote at install time to send the child with every request of a parent account. This also gives each child of a multi-child parent account their own grades, homework and absences.
@@ -48,7 +50,8 @@ All notable changes to this integration are documented here. The format follows
 - Configuration buttons: test the connection, log in with a QR code, forget the saved session.
 - Texts in English, French, German and Spanish (configuration screen, messages, widgets, documentation).
 
-[Unreleased]: https://github.com/prohand/gladys-pronote/compare/v0.0.5...HEAD
+[Unreleased]: https://github.com/prohand/gladys-pronote/compare/v0.0.6...HEAD
+[0.0.6]: https://github.com/prohand/gladys-pronote/compare/v0.0.5...v0.0.6
 [0.0.5]: https://github.com/prohand/gladys-pronote/compare/v0.0.4...v0.0.5
 [0.0.4]: https://github.com/prohand/gladys-pronote/compare/v0.0.3...v0.0.4
 [0.0.3]: https://github.com/prohand/gladys-pronote/compare/v0.0.2...v0.0.3
