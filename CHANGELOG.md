@@ -6,6 +6,8 @@ All notable changes to this integration are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.0.10] - 2026-10-22
+
 ### Added
 
 - The timetable widget has a **Shift** setting, from 0 to 7 school days (0 by default, as before). For a timetable in columns, one a day like on paper, add the widget once per day side by side: **Next school day** with **Shift** 0, 1, 2, 3 and 4 shows the next five school days, weekends and holidays skipped. A Gladys widget has no columns of its own.
@@ -86,7 +88,8 @@ All notable changes to this integration are documented here. The format follows
 - Configuration buttons: test the connection, log in with a QR code, forget the saved session.
 - Texts in English, French, German and Spanish (configuration screen, messages, widgets, documentation).
 
-[Unreleased]: https://github.com/prohand/gladys-pronote/compare/v0.0.9...HEAD
+[Unreleased]: https://github.com/prohand/gladys-pronote/compare/v0.0.10...HEAD
+[0.0.10]: https://github.com/prohand/gladys-pronote/compare/v0.0.9...v0.0.10
 [0.0.9]: https://github.com/prohand/gladys-pronote/compare/v0.0.8...v0.0.9
 [0.0.8]: https://github.com/prohand/gladys-pronote/compare/v0.0.7...v0.0.8
 [0.0.7]: https://github.com/prohand/gladys-pronote/compare/v0.0.6...v0.0.7
