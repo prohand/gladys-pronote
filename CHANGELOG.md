@@ -6,6 +6,8 @@ All notable changes to this integration are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.0.9] - 2026-10-22
+
 ### Added
 
 - The grades widget has a **Number of grades** setting, from 1 to 8 (8 by default, as before). A Gladys list holds 8 rows at most.
@@ -80,7 +82,8 @@ All notable changes to this integration are documented here. The format follows
 - Configuration buttons: test the connection, log in with a QR code, forget the saved session.
 - Texts in English, French, German and Spanish (configuration screen, messages, widgets, documentation).
 
-[Unreleased]: https://github.com/prohand/gladys-pronote/compare/v0.0.8...HEAD
+[Unreleased]: https://github.com/prohand/gladys-pronote/compare/v0.0.9...HEAD
+[0.0.9]: https://github.com/prohand/gladys-pronote/compare/v0.0.8...v0.0.9
 [0.0.8]: https://github.com/prohand/gladys-pronote/compare/v0.0.7...v0.0.8
 [0.0.7]: https://github.com/prohand/gladys-pronote/compare/v0.0.6...v0.0.7
 [0.0.6]: https://github.com/prohand/gladys-pronote/compare/v0.0.5...v0.0.6
