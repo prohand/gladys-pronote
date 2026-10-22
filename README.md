@@ -25,7 +25,7 @@ User documentation: [English](docs/en.md) · [Français](docs/fr.md) ·
 | Device for the account | Unread messages                                                                                                              |
 | Scene triggers         | `new_grade`, `new_homework`, `lesson_canceled`, `new_absence`                                                                |
 | Scene actions          | `refresh` (read now), `day_summary` (lessons and homework of a day, ready for a TTS)                                         |
-| Dashboard widgets      | `student` (summary), `homework`, `grades`, `notebook` (one list each), `timetable` (a day)                                   |
+| Dashboard widgets      | `student` (summary), `homework`, `grades`, `notebook` (one list each), `timetable` (a day, a period or one column a day)     |
 | Configuration buttons  | Test the connection, log in with a QR code (ENT accounts), forget the saved session                                          |
 | Languages              | English, French, German, Spanish                                                                                             |
 | Transport              | `cloud` (the PRONOTE server is on the internet)                                                                              |

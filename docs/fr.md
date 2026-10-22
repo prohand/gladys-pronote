@@ -138,6 +138,11 @@ Exemple : _chaque jour de semaine à 07:00 → Obtenir la journée d'un élève
   partir de ce jour : une ligne par jour, avec ses horaires et ses matières, et
   les cours quand on ouvre la ligne. **Aujourd'hui** et **8** montrent
   d'aujourd'hui à J+7. Les jours sans cours (week-end, vacances) sont omis.
+  Son réglage **Décalage** (0 par défaut) le repousse de 1 à 7 jours de cours.
+  Pour un emploi du temps comme sur papier, une colonne par jour, ajoutez le
+  widget une fois par jour et placez-les côte à côte : **Prochain jour de cours**
+  avec un **Décalage** de 0, 1, 2, 3 et 4 montre les cinq prochains jours de
+  cours, sans les week-ends ni les vacances.
 
 Chaque widget a un réglage **Élève** : ajoutez un widget par enfant. Tous
 affichent la dernière lecture : ouvrir un tableau de bord n'interroge

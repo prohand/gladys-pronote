@@ -6,6 +6,10 @@ All notable changes to this integration are documented here. The format follows
 
 ## [Unreleased]
 
+### Added
+
+- The timetable widget has a **Shift** setting, from 0 to 7 school days (0 by default, as before). For a timetable in columns, one a day like on paper, add the widget once per day side by side: **Next school day** with **Shift** 0, 1, 2, 3 and 4 shows the next five school days, weekends and holidays skipped. A Gladys widget has no columns of its own.
+
 ## [0.0.9] - 2026-10-22
 
 ### Added

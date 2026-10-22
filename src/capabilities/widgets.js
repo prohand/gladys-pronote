@@ -12,7 +12,10 @@
 //   - `timetable`: the lessons of one day (today, tomorrow or the next school
 //     day), canceled lessons and tests flagged. Its `days` setting (1 by
 //     default) turns it into a period of up to 8 days, one row a day: a
-//     card-list holds 8 rows, not the lessons of a week.
+//     card-list holds 8 rows, not the lessons of a week. Its `shift` setting
+//     moves it 1 to 7 school days further: one widget a day side by side
+//     (shifted 0, 1, 2…) makes the columns of a paper timetable, which the
+//     widget vocabulary has no component for.
 //
 // All answer from the last read: opening a dashboard never calls PRONOTE.
 // The values are computed rather than bound to the device features, so a
@@ -62,10 +65,13 @@ const LIST_SIZE = 8;
 /** The timetable widget shows 8 days at most: today to D+7, one row a day. */
 const PERIOD_DAYS = 8;
 
+/** The timetable widget looks 7 school days further at most (read 3 weeks ahead). */
+const MAX_SHIFT = 7;
+
 /**
- * A number setting, `fallback` when unset or not a number, capped at `max`.
- * The core applies the manifest bounds, but an instance saved before the
- * setting existed sends nothing.
+ * A number setting, `fallback` when unset, not a number or under 1, capped at
+ * `max`. The core applies the manifest bounds, but an instance saved before
+ * the setting existed sends nothing.
  */
 function countSetting(value, fallback, max) {
   const count = Math.round(Number(value));
@@ -174,6 +180,12 @@ const T = {
     fr: 'Pas de jour de cours dans les trois semaines à venir.',
     de: 'Kein Schultag in den nächsten drei Wochen.',
     es: 'No hay día de clase en las próximas tres semanas.',
+  },
+  unknownSchoolDay: {
+    en: 'This school day is not in the timetable yet.',
+    fr: 'Ce jour de cours n’est pas encore dans l’emploi du temps.',
+    de: 'Dieser Schultag steht noch nicht im Stundenplan.',
+    es: 'Este día de clase aún no está en el horario.',
   },
   canceled: { en: 'Canceled', fr: 'Annulé', de: 'Entfällt', es: 'Cancelada' },
   test: { en: 'Test', fr: 'Contrôle', de: 'Test', es: 'Examen' },
@@ -549,17 +561,11 @@ function hours(from, to) {
  * The timetable widget over several days: one row a day (its hours, the
  * subjects held, the most serious flag), the lessons in the row's detail panel.
  */
-function periodContent(student, which, count, now, language) {
-  const period = periodSummary(student, which, now, count);
+function periodContent(student, which, count, shift, now, language) {
+  const period = periodSummary(student, which, now, count, shift);
   const firstName = student.name.split(' ')[0];
   if (!period.from) {
-    return {
-      ttl_seconds: 600,
-      components: [
-        { type: 'text', variant: 'heading', text: truncate(student.name, 40) },
-        { type: 'text', variant: 'caption', text: T.noSchoolDay },
-      ],
-    };
+    return noDayContent(student, shift);
   }
   const range = `${dayLabel(period.from, language)} → ${dayLabel(period.to, language)}`;
   const components = [
@@ -623,6 +629,17 @@ function periodContent(student, which, count, now, language) {
   return { ttl_seconds: 600, components };
 }
 
+/** The timetable content when the day asked for is not known. */
+function noDayContent(student, shift) {
+  return {
+    ttl_seconds: 600,
+    components: [
+      { type: 'text', variant: 'heading', text: truncate(student.name, 40) },
+      { type: 'text', variant: 'caption', text: shift ? T.unknownSchoolDay : T.noSchoolDay },
+    ],
+  };
+}
+
 /** The `timetable` widget content. */
 export function timetableContent(gladys, sync, { settings = {}, language = 'en' }) {
   const { student, content } = studentOf(gladys, sync, settings, language);
@@ -631,18 +648,13 @@ export function timetableContent(gladys, sync, { settings = {}, language = 'en' 
   }
   const which = Object.values(DAYS).includes(settings.day) ? settings.day : DAYS.NEXT_SCHOOL_DAY;
   const days = countSetting(settings.days, 1, PERIOD_DAYS);
+  const shift = countSetting(settings.shift, 0, MAX_SHIFT);
   if (days > 1) {
-    return periodContent(student, which, days, sync.now(), language);
+    return periodContent(student, which, days, shift, sync.now(), language);
   }
-  const summary = daySummary(student, which, sync.now());
+  const summary = daySummary(student, which, sync.now(), shift);
   if (!summary.date) {
-    return {
-      ttl_seconds: 600,
-      components: [
-        { type: 'text', variant: 'heading', text: truncate(student.name, 40) },
-        { type: 'text', variant: 'caption', text: T.noSchoolDay },
-      ],
-    };
+    return noDayContent(student, shift);
   }
   const components = [
     {
