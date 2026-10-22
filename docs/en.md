@@ -113,14 +113,19 @@ Say "First lesson at {{first_lesson}}. Homework: {{homework_text}}"_.
 - **PRONOTE homework**: the homework of the homework horizon, each marked **Done**,
   **Not done**, **Today** or **Tomorrow**, as in PRONOTE, under a **To do** tile.
 
-- **PRONOTE grades**: the average and the 8 most recent grades, with the class
-  average.
+- **PRONOTE grades**: the average and the most recent grades, with the class
+  average. Its **Number of grades** setting goes from 1 to 8 (8 by default): a
+  Gladys list holds 8 rows at most.
 
 - **PRONOTE correspondence book**: the notes of the teachers and the school
   (observations, encouragements, book issues) of the current period.
 
 - **PRONOTE timetable**: the lessons of today, tomorrow or the next school day, with
-  canceled lessons and tests flagged.
+  canceled lessons and tests flagged. Its **Days shown** setting (1 by default)
+  widens it to a period of up to 8 days from that day: one row a day, with its
+  hours and subjects, and the lessons when the row is opened. **Today** and
+  **8** show today to D+7. Days without lessons (weekend, holidays) are left
+  out.
 
 Each widget has a **Student** setting: add a widget once per child. All show the
 last read: opening a dashboard never calls PRONOTE.

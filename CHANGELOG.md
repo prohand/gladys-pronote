@@ -6,6 +6,11 @@ All notable changes to this integration are documented here. The format follows
 
 ## [Unreleased]
 
+### Added
+
+- The grades widget has a **Number of grades** setting, from 1 to 8 (8 by default, as before). A Gladys list holds 8 rows at most.
+- The timetable widget has a **Days shown** setting (1 by default, as before): from 2 to 8, it shows a period from the chosen day, one row a day with its hours and subjects, the lessons in the row's detail, and tiles for the lessons, the canceled lessons and the tests. **Today** with **8** shows today to D+7.
+
 ## [0.0.8] - 2026-10-20
 
 ### Added

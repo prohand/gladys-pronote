@@ -119,14 +119,18 @@ Schultag) → Sagen „Erste Stunde um {{first_lesson}}. Hausaufgaben:
   als **Erledigt**, **Offen**, **Heute** oder **Morgen** markiert, wie in PRONOTE,
   unter einer Kachel **Offen**.
 
-- **PRONOTE-Noten**: der Durchschnitt und die 8 neuesten Noten, mit dem
-  Klassendurchschnitt.
+- **PRONOTE-Noten**: der Durchschnitt und die neuesten Noten, mit dem
+  Klassendurchschnitt. Die Einstellung **Anzahl der Noten** geht von 1 bis 8
+  (Standard 8): eine Gladys-Liste hat höchstens 8 Zeilen.
 
 - **PRONOTE-Mitteilungsheft**: die Notizen der Lehrkräfte und der Schule
   (Bemerkungen, Lob, Heftmängel) des laufenden Zeitraums.
 
 - **PRONOTE-Stundenplan**: die Stunden von heute, morgen oder dem nächsten
-  Schultag, mit Ausfällen und Tests markiert.
+  Schultag, mit Ausfällen und Tests markiert. Die Einstellung **Angezeigte Tage**
+  (Standard 1) erweitert ihn auf bis zu 8 Tage ab diesem Tag: eine Zeile pro Tag,
+  mit Uhrzeiten und Fächern, und die Stunden beim Öffnen der Zeile. **Heute** und
+  **8** zeigen heute bis T+7. Tage ohne Unterricht (Wochenende, Ferien) fehlen.
 
 Jedes Widget hat eine Einstellung **Schüler**: ein Widget pro Kind hinzufügen.
 Alle zeigen den letzten Abruf: Das Öffnen eines Dashboards fragt PRONOTE nie ab.

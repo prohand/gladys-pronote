@@ -1179,10 +1179,10 @@
         "es": "Horario PRONOTE"
       },
       "description": {
-        "en": "The lessons of a day, with canceled lessons and tests.",
-        "fr": "Les cours d'une journée, avec les cours annulés et les contrôles.",
-        "de": "Die Stunden eines Tages, mit Ausfällen und Tests.",
-        "es": "Las clases de un día, con las clases canceladas y los exámenes."
+        "en": "The lessons of a day or of up to 8 days, with canceled lessons and tests.",
+        "fr": "Les cours d'une journée ou de 8 jours au plus, avec les cours annulés et les contrôles.",
+        "de": "Die Stunden eines Tages oder bis zu 8 Tagen, mit Ausfällen und Tests.",
+        "es": "Las clases de un día o de hasta 8 días, con las clases canceladas y los exámenes."
       },
       "icon": "calendar",
       "settings": [
@@ -1212,6 +1212,12 @@
             "fr": "Jour",
             "de": "Tag",
             "es": "Día"
+          },
+          "description": {
+            "en": "The day shown, or the first day of the period.",
+            "fr": "Le jour affiché, ou le premier jour de la période.",
+            "de": "Der angezeigte Tag, oder der erste Tag des Zeitraums.",
+            "es": "El día mostrado, o el primer día del periodo."
           },
           "required": false,
           "default": "next_school_day",
@@ -1244,6 +1250,26 @@
               }
             }
           ]
+        },
+        {
+          "key": "days",
+          "type": "number",
+          "label": {
+            "en": "Days shown",
+            "fr": "Jours affichés",
+            "de": "Angezeigte Tage",
+            "es": "Días mostrados"
+          },
+          "description": {
+            "en": "1: the day, lesson by lesson. 2 to 8: one row a day from that day (Today and 8: up to D+7).",
+            "fr": "1 : le jour, cours par cours. 2 à 8 : une ligne par jour à partir de ce jour (Aujourd'hui et 8 : jusqu'à J+7).",
+            "de": "1: der Tag, Stunde für Stunde. 2 bis 8: eine Zeile pro Tag ab diesem Tag (Heute und 8: bis T+7).",
+            "es": "1: el día, clase por clase. 2 a 8: una fila por día desde ese día (Hoy y 8: hasta D+7)."
+          },
+          "required": false,
+          "default": 1,
+          "min": 1,
+          "max": 8
         }
       ],
       "action_timeout_seconds": 90
@@ -1293,10 +1319,10 @@
         "es": "Notas PRONOTE"
       },
       "description": {
-        "en": "The average and the 8 last grades, with the class average.",
-        "fr": "La moyenne et les 8 dernières notes, avec la moyenne de la classe.",
-        "de": "Der Durchschnitt und die 8 letzten Noten, mit dem Klassendurchschnitt.",
-        "es": "La media y las 8 últimas notas, con la media de la clase."
+        "en": "The average and the last grades (8 by default), with the class average.",
+        "fr": "La moyenne et les dernières notes (8 par défaut), avec la moyenne de la classe.",
+        "de": "Der Durchschnitt und die letzten Noten (standardmäßig 8), mit dem Klassendurchschnitt.",
+        "es": "La media y las últimas notas (8 por defecto), con la media de la clase."
       },
       "icon": "award",
       "settings": [
@@ -1317,6 +1343,26 @@
             "es": "Vacío: el primer alumno de la cuenta."
           },
           "required": false
+        },
+        {
+          "key": "count",
+          "type": "number",
+          "label": {
+            "en": "Number of grades",
+            "fr": "Nombre de notes",
+            "de": "Anzahl der Noten",
+            "es": "Número de notas"
+          },
+          "description": {
+            "en": "From 1 to 8: a Gladys list holds 8 rows at most.",
+            "fr": "De 1 à 8 : une liste Gladys contient 8 lignes au plus.",
+            "de": "Von 1 bis 8: eine Gladys-Liste hat höchstens 8 Zeilen.",
+            "es": "De 1 a 8: una lista de Gladys tiene 8 filas como máximo."
+          },
+          "required": false,
+          "default": 8,
+          "min": 1,
+          "max": 8
         }
       ]
     },

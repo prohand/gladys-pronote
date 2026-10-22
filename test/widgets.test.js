@@ -189,6 +189,65 @@ test('the timetable widget flags canceled lessons and tests', async () => {
   assert.equal(list.items[0].title, '09:00–10:00 MATHEMATIQUES');
 });
 
+test('the grades widget shows as many grades as its setting says', async () => {
+  await current.sync.sync();
+  const list = async (count) =>
+    (await content('grades', { student: studentId(0), count })).components.find(
+      (component) => component.type === 'card-list',
+    );
+  assert.deepEqual(
+    (await list(1)).items.map((item) => item.title),
+    ['FRANCAIS'],
+  );
+  assert.equal((await list(2)).items.length, 2);
+  // Unset (an instance saved before the setting), or out of bounds: the default.
+  assert.equal((await list(undefined)).items.length, 3);
+  assert.equal((await list(0)).items.length, 3);
+  assert.equal((await list(50)).items.length, 3);
+});
+
+test('the timetable widget over several days, one row a day', async () => {
+  await current.sync.sync();
+  for (const language of LANGUAGES) {
+    for (const day of ['today', 'tomorrow', 'next_school_day']) {
+      await content('timetable', { student: studentId(0), day, days: 8 }, language);
+      await content('timetable', { student: studentId(1), day, days: 3 }, language);
+    }
+  }
+  const { components } = await content(
+    'timetable',
+    { student: studentId(0), day: 'today', days: 8 },
+    'fr',
+  );
+  assert.equal(components[0].text, 'DURAND · mer. 14/10 → mer. 21/10');
+  assert.deepEqual(
+    components.filter((component) => component.type === 'value').map((tile) => tile.value),
+    [4, 1, 1],
+  );
+  const list = components.find((component) => component.type === 'card-list');
+  assert.deepEqual(
+    list.items.map((item) => [item.title, item.subtitle, item.badge?.text ?? null]),
+    [
+      ['mer. 14/10 · 08:00–15:00', 'MATHEMATIQUES, ANGLAIS', null],
+      ['jeu. 15/10 · 09:00–12:00', 'MATHEMATIQUES, HISTOIRE', 'Annulé'],
+    ],
+  );
+  assert.equal(
+    list.items[1].description,
+    '09:00–10:00 MATHEMATIQUES (B12)\n10:00–11:00 PHYSIQUE (B12) · Annulé\n' +
+      '11:00–12:00 HISTOIRE (B12) · Contrôle',
+  );
+  // Tom has no lesson on the weekend that follows his Friday.
+  const tom = await content('timetable', { student: studentId(1), day: 'tomorrow', days: 2 });
+  assert.deepEqual(
+    tom.components.find((component) => component.type === 'card-list').items.length,
+    1,
+  );
+  current.clock.now = at(2026, 10, 17, 9); // Saturday: the weekend, then nothing read
+  const empty = await content('timetable', { student: studentId(1), day: 'today', days: 3 });
+  assert.match(empty.components[1].text.fr, /Pas de cours sur cette période/);
+});
+
 test('during the holidays, the widgets look at the return', async () => {
   // Tuesday 20 October, Toussaint holidays: PRONOTE shows the homework and the
   // lessons of Monday 2 November, the widgets did not look that far.
