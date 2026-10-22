@@ -125,14 +125,19 @@ Exemple : _chaque jour de semaine à 07:00 → Obtenir la journée d'un élève
   **Fait**, **Non fait**, **Aujourd'hui** ou **Demain**, comme dans PRONOTE, sous
   une tuile **À faire**.
 
-- **Notes PRONOTE** : la moyenne et les 8 notes les plus récentes, avec la moyenne
-  de la classe.
+- **Notes PRONOTE** : la moyenne et les notes les plus récentes, avec la moyenne
+  de la classe. Son réglage **Nombre de notes** va de 1 à 8 (8 par défaut) : une
+  liste Gladys contient 8 lignes au plus.
 
 - **Carnet PRONOTE** : les mots des professeurs et de l'établissement
   (observations, encouragements, défauts de carnet) de la période en cours.
 
 - **Emploi du temps PRONOTE** : les cours d'aujourd'hui, de demain ou du prochain
-  jour de cours, avec les cours annulés et les contrôles signalés.
+  jour de cours, avec les cours annulés et les contrôles signalés. Son réglage
+  **Jours affichés** (1 par défaut) l'élargit à une période de 8 jours au plus à
+  partir de ce jour : une ligne par jour, avec ses horaires et ses matières, et
+  les cours quand on ouvre la ligne. **Aujourd'hui** et **8** montrent
+  d'aujourd'hui à J+7. Les jours sans cours (week-end, vacances) sont omis.
 
 Chaque widget a un réglage **Élève** : ajoutez un widget par enfant. Tous
 affichent la dernière lecture : ouvrir un tableau de bord n'interroge

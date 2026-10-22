@@ -15,6 +15,7 @@ import {
   nextLesson,
   nextSchoolDay,
   pendingHomework,
+  periodSummary,
   recentGrades,
 } from '../src/pronote/derive.js';
 import { at } from './helpers/fakePawnote.js';
@@ -121,4 +122,26 @@ test('today and tomorrow are calendar days', () => {
   assert.equal(daySummary(lea, DAYS.TOMORROW, NOW).date, '2026-10-15');
   assert.equal(daySummary(tom, DAYS.TOMORROW, NOW).lessons.length, 0);
   assert.equal(daySummary(lea, DAYS.NEXT_SCHOOL_DAY, at(2026, 10, 15, 18)).date, '');
+});
+
+test('a period counts calendar days and lists the days with a lesson', () => {
+  // Today and 8 days: Wednesday 14 to Wednesday 21 October, D+7.
+  const week = periodSummary(lea, DAYS.TODAY, NOW, 8);
+  assert.equal(week.from, '2026-10-14');
+  assert.equal(week.to, '2026-10-21');
+  assert.deepEqual(
+    week.days.map((day) => [day.date, day.lessons.length, day.held.length, day.canceled.length]),
+    [
+      ['2026-10-14', 2, 2, 0],
+      ['2026-10-15', 3, 2, 1],
+    ],
+  );
+  assert.equal(week.days[1].first.subject, 'MATHEMATIQUES');
+  assert.equal(week.days[1].last.subject, 'HISTOIRE');
+  // From the next school day: Tom's Friday, nothing over the weekend.
+  assert.deepEqual(
+    periodSummary(tom, DAYS.NEXT_SCHOOL_DAY, NOW, 3).days.map((day) => day.date),
+    ['2026-10-16'],
+  );
+  assert.equal(periodSummary(tom, DAYS.NEXT_SCHOOL_DAY, at(2026, 10, 16, 18), 3).from, '');
 });

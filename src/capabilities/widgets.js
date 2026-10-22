@@ -6,10 +6,13 @@
 //     (none by default) can add one of the lists below. A button reads PRONOTE
 //     now.
 //   - `homework`, `grades`, `notebook`: one list each — the homework (done or
-//     not), the last grades, the correspondence book — so a dashboard spreads
-//     them over small cards instead of repeating the summary in each.
+//     not), the last grades (its `count` setting, 8 by default), the
+//     correspondence book — so a dashboard spreads them over small cards
+//     instead of repeating the summary in each.
 //   - `timetable`: the lessons of one day (today, tomorrow or the next school
-//     day), canceled lessons and tests flagged.
+//     day), canceled lessons and tests flagged. Its `days` setting (1 by
+//     default) turns it into a period of up to 8 days, one row a day: a
+//     card-list holds 8 rows, not the lessons of a week.
 //
 // All answer from the last read: opening a dashboard never calls PRONOTE.
 // The values are computed rather than bound to the device features, so a
@@ -28,6 +31,7 @@ import {
   lessonLine,
   nextLesson,
   nextSchoolDay,
+  periodSummary,
   recentGrades,
 } from '../pronote/derive.js';
 import { addDays, dayKey, formatPoints, timeOf, truncate } from '../pronote/format.js';
@@ -54,6 +58,19 @@ export const STUDENT_LISTS = {
 
 /** A card-list holds 8 rows at most. */
 const LIST_SIZE = 8;
+
+/** The timetable widget shows 8 days at most: today to D+7, one row a day. */
+const PERIOD_DAYS = 8;
+
+/**
+ * A number setting, `fallback` when unset or not a number, capped at `max`.
+ * The core applies the manifest bounds, but an instance saved before the
+ * setting existed sends nothing.
+ */
+function countSetting(value, fallback, max) {
+  const count = Math.round(Number(value));
+  return Number.isFinite(count) && count >= 1 ? Math.min(count, max) : fallback;
+}
 
 /** Button action keys of the widget contents. */
 export const WIDGET_ACTIONS = { REFRESH: 'refresh' };
@@ -162,6 +179,14 @@ const T = {
   test: { en: 'Test', fr: 'Contrôle', de: 'Test', es: 'Examen' },
   exempted: { en: 'Exempted', fr: 'Dispensé', de: 'Befreit', es: 'Exento' },
   lessons: { en: 'Lessons', fr: 'Cours', de: 'Stunden', es: 'Clases' },
+  canceledLessons: { en: 'Canceled', fr: 'Annulés', de: 'Entfallen', es: 'Canceladas' },
+  tests: { en: 'Tests', fr: 'Contrôles', de: 'Tests', es: 'Exámenes' },
+  noLessonPeriod: {
+    en: 'No lesson in this period.',
+    fr: 'Pas de cours sur cette période.',
+    de: 'Kein Unterricht in diesem Zeitraum.',
+    es: 'No hay clases en este periodo.',
+  },
   start: { en: 'Start', fr: 'Début', de: 'Beginn', es: 'Inicio' },
   end: { en: 'End', fr: 'Fin', de: 'Ende', es: 'Fin' },
 };
@@ -267,9 +292,9 @@ function homeworkList(shown, now, language) {
   };
 }
 
-/** The last grades, the most recent first. */
-function gradesList(student, language) {
-  const grades = recentGrades(student, LIST_SIZE);
+/** The last `count` grades, the most recent first. */
+function gradesList(student, language, count = LIST_SIZE) {
+  const grades = recentGrades(student, count);
   if (!grades.length) {
     return { type: 'text', variant: 'caption', text: T.noGrade };
   }
@@ -474,6 +499,7 @@ export function homeworkContent(gladys, sync, request) {
 /** The `grades` widget content. */
 export function gradesContent(gladys, sync, request) {
   const language = request.language ?? 'en';
+  const count = countSetting(request.settings?.count, LIST_SIZE, LIST_SIZE);
   return listContent(gladys, sync, request, T.grades, (student) => {
     if (!student.grades) {
       return { list: null };
@@ -490,7 +516,7 @@ export function gradesContent(gladys, sync, request) {
             unit: '/20',
           },
         }),
-      list: gradesList(student, language),
+      list: gradesList(student, language, count),
     };
   });
 }
@@ -503,6 +529,100 @@ export function notebookContent(gladys, sync, request) {
   }));
 }
 
+/** What a lesson is flagged with: canceled, test or exempted, `null` otherwise. */
+function lessonBadge(lesson, language) {
+  if (lesson.canceled) {
+    return { text: pick(language, T.canceled), color: WIDGET_COLORS.DANGER };
+  }
+  if (lesson.test) {
+    return { text: pick(language, T.test), color: WIDGET_COLORS.WARNING };
+  }
+  return lesson.exempted ? { text: pick(language, T.exempted), color: WIDGET_COLORS.INFO } : null;
+}
+
+/** `08:00–09:00` */
+function hours(from, to) {
+  return `${timeOf(from)}–${timeOf(to)}`;
+}
+
+/**
+ * The timetable widget over several days: one row a day (its hours, the
+ * subjects held, the most serious flag), the lessons in the row's detail panel.
+ */
+function periodContent(student, which, count, now, language) {
+  const period = periodSummary(student, which, now, count);
+  const firstName = student.name.split(' ')[0];
+  if (!period.from) {
+    return {
+      ttl_seconds: 600,
+      components: [
+        { type: 'text', variant: 'heading', text: truncate(student.name, 40) },
+        { type: 'text', variant: 'caption', text: T.noSchoolDay },
+      ],
+    };
+  }
+  const range = `${dayLabel(period.from, language)} → ${dayLabel(period.to, language)}`;
+  const components = [
+    { type: 'text', variant: 'heading', text: truncate(`${firstName} · ${range}`, 40) },
+  ];
+  if (!period.days.length) {
+    components.push({ type: 'text', variant: 'caption', text: T.noLessonPeriod });
+    return { ttl_seconds: 600, components };
+  }
+  const total = (measure) => period.days.reduce((sum, day) => sum + measure(day), 0);
+  components.push(
+    {
+      type: 'value',
+      label: T.lessons,
+      icon: 'calendar',
+      value: total((day) => day.held.length),
+    },
+    {
+      type: 'value',
+      label: T.canceledLessons,
+      icon: 'x-circle',
+      value: total((day) => day.canceled.length),
+    },
+    {
+      type: 'value',
+      label: T.tests,
+      icon: 'edit',
+      value: total((day) => day.lessons.filter((lesson) => lesson.test && !lesson.canceled).length),
+    },
+    {
+      type: 'card-list',
+      display: 'list',
+      items: period.days.slice(0, LIST_SIZE).map((day) => {
+        const flagged =
+          day.lessons.find((lesson) => lesson.canceled) ??
+          day.lessons.find((lesson) => lesson.test) ??
+          null;
+        const badge = flagged ? lessonBadge(flagged, language) : null;
+        const lines = day.lessons.map((lesson) => {
+          const room = lesson.rooms.length ? ` (${lesson.rooms.join(', ')})` : '';
+          const flag = lessonBadge(lesson, language);
+          const line = `${hours(lesson.start, lesson.end)} ${lesson.subject}${room}`;
+          return flag ? `${line} · ${flag.text}` : line;
+        });
+        return {
+          title: truncate(
+            `${dayLabel(day.date, language)} · ${day.first ? hours(day.first.start, day.last.end) : '—'}`,
+            60,
+          ),
+          subtitle: truncate(
+            day.held.map((lesson) => lesson.subject).join(', ') || pick(language, T.canceled),
+            80,
+          ),
+          ...(badge && { badge }),
+          description: truncate(lines.join('\n'), 2000),
+        };
+      }),
+    },
+    REFRESH_BUTTON,
+  );
+  return { ttl_seconds: 600, components };
+}
+
 /** The `timetable` widget content. */
 export function timetableContent(gladys, sync, { settings = {}, language = 'en' }) {
   const { student, content } = studentOf(gladys, sync, settings, language);
@@ -510,6 +630,10 @@ export function timetableContent(gladys, sync, { settings = {}, language = 'en' 
     return content;
   }
   const which = Object.values(DAYS).includes(settings.day) ? settings.day : DAYS.NEXT_SCHOOL_DAY;
+  const days = countSetting(settings.days, 1, PERIOD_DAYS);
+  if (days > 1) {
+    return periodContent(student, which, days, sync.now(), language);
+  }
   const summary = daySummary(student, which, sync.now());
   if (!summary.date) {
     return {
@@ -548,14 +672,8 @@ export function timetableContent(gladys, sync, { settings = {}, language = 'en' 
     {
       type: 'card-list',
       display: 'list',
-      items: summary.lessons.slice(0, 8).map((lesson) => {
-        const badge = lesson.canceled
-          ? { text: pick(language, T.canceled), color: WIDGET_COLORS.DANGER }
-          : lesson.test
-            ? { text: pick(language, T.test), color: WIDGET_COLORS.WARNING }
-            : lesson.exempted
-              ? { text: pick(language, T.exempted), color: WIDGET_COLORS.INFO }
-              : null;
+      items: summary.lessons.slice(0, LIST_SIZE).map((lesson) => {
+        const badge = lessonBadge(lesson, language);
         const details = [...lesson.rooms, ...lesson.teachers, lesson.status].filter(Boolean);
         return {
           title: truncate(`${timeOf(lesson.start)}–${timeOf(lesson.end)} ${lesson.subject}`, 60),

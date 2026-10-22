@@ -112,6 +112,45 @@ export function gradeLine(grade) {
   return grade ? `${grade.subject} ${grade.label} (${shortDate(grade.date)})` : '—';
 }
 
+/** One day of lessons: all of them, those held, the first and last held. */
+function dayOf(student, day) {
+  const lessons = lessonsOn(student, day);
+  const taking = held(lessons);
+  return {
+    date: day,
+    lessons,
+    held: taking,
+    canceled: lessons.filter((lesson) => lesson.canceled),
+    first: taking[0] ?? null,
+    last: taking.at(-1) ?? null,
+  };
+}
+
+/**
+ * Several days of lessons, for the timetable widget: `count` calendar days
+ * from the day `which` stands for (`today` and 8 days: up to D+7). Only the
+ * days with a lesson are listed: the weekend and the holidays say nothing.
+ *
+ * @param {object} student a snapshot student
+ * @param {string} which a DAYS value, the first day
+ * @param {Date} now
+ * @param {number} count how many calendar days
+ * @returns {{ from: string, to: string, days: object[] }} `from` empty when unknown
+ */
+export function periodSummary(student, which, now, count) {
+  const from = resolveDay(student, which, now);
+  if (!from) {
+    return { from: '', to: '', days: [] };
+  }
+  const start = new Date(`${from}T12:00:00`);
+  const dates = Array.from({ length: count }, (_, index) => dayKey(addDays(start, index)));
+  return {
+    from,
+    to: dates.at(-1),
+    days: dates.map((day) => dayOf(student, day)).filter((day) => day.lessons.length),
+  };
+}
+
 /**
  * Everything about one day of one student, for the scene action and the
  * timetable widget.
@@ -125,15 +164,5 @@ export function daySummary(student, which, now) {
   if (!day) {
     return { date: '', lessons: [], held: [], canceled: [], homework: [] };
   }
-  const lessons = lessonsOn(student, day);
-  const taking = held(lessons);
-  return {
-    date: day,
-    lessons,
-    held: taking,
-    canceled: lessons.filter((lesson) => lesson.canceled),
-    first: taking[0] ?? null,
-    last: taking.at(-1) ?? null,
-    homework: homeworkOn(student, day),
-  };
+  return { ...dayOf(student, day), homework: homeworkOn(student, day) };
 }

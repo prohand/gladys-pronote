@@ -121,14 +121,19 @@ de clase) → Decir «Primera clase a las {{first_lesson}}. Deberes:
   **Hecho**, **Pendiente**, **Hoy** o **Mañana**, como en PRONOTE, bajo una
   ficha **Pendientes**.
 
-- **Notas PRONOTE**: la media y las 8 notas más recientes, con la media de la
-  clase.
+- **Notas PRONOTE**: la media y las notas más recientes, con la media de la
+  clase. Su ajuste **Número de notas** va de 1 a 8 (8 por defecto): una lista de
+  Gladys tiene 8 filas como máximo.
 
 - **Libreta PRONOTE**: las notas de los profesores y del centro (observaciones,
   ánimos, faltas en la libreta) del periodo en curso.
 
 - **Horario PRONOTE**: las clases de hoy, mañana o el próximo día de clase, con las
-  clases canceladas y los exámenes señalados.
+  clases canceladas y los exámenes señalados. Su ajuste **Días mostrados** (1 por
+  defecto) lo amplía a un periodo de hasta 8 días desde ese día: una fila por día,
+  con su horario y sus asignaturas, y las clases al abrir la fila. **Hoy** y **8**
+  muestran de hoy a D+7. Los días sin clases (fin de semana, vacaciones) se
+  omiten.
 
 Cada widget tiene un ajuste **Alumno**: añada un widget por hijo. Todos muestran
 la última lectura: abrir un panel nunca consulta PRONOTE.
