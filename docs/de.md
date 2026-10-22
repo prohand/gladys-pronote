@@ -131,6 +131,11 @@ Schultag) → Sagen „Erste Stunde um {{first_lesson}}. Hausaufgaben:
   (Standard 1) erweitert ihn auf bis zu 8 Tage ab diesem Tag: eine Zeile pro Tag,
   mit Uhrzeiten und Fächern, und die Stunden beim Öffnen der Zeile. **Heute** und
   **8** zeigen heute bis T+7. Tage ohne Unterricht (Wochenende, Ferien) fehlen.
+  Die Einstellung **Verschiebung** (Standard 0) rückt ihn 1 bis 7 Schultage
+  weiter. Für einen Stundenplan wie auf Papier, eine Spalte pro Tag, das Widget
+  einmal pro Tag hinzufügen und nebeneinander stellen: **Nächster Schultag** mit
+  **Verschiebung** 0, 1, 2, 3 und 4 zeigt die nächsten fünf Schultage, ohne
+  Wochenenden und Ferien.
 
 Jedes Widget hat eine Einstellung **Schüler**: ein Widget pro Kind hinzufügen.
 Alle zeigen den letzten Abruf: Das Öffnen eines Dashboards fragt PRONOTE nie ab.

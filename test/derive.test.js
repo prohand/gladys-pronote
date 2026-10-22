@@ -17,6 +17,7 @@ import {
   pendingHomework,
   periodSummary,
   recentGrades,
+  resolveDay,
 } from '../src/pronote/derive.js';
 import { at } from './helpers/fakePawnote.js';
 import { NOW } from './helpers/fixtures.js';
@@ -144,4 +145,27 @@ test('a period counts calendar days and lists the days with a lesson', () => {
     ['2026-10-16'],
   );
   assert.equal(periodSummary(tom, DAYS.NEXT_SCHOOL_DAY, at(2026, 10, 16, 18), 3).from, '');
+});
+
+test('a shift counts school days, never the weekend nor a canceled day', () => {
+  const lessonOn = (month, day, canceled = false) => ({
+    subject: 'MATHEMATIQUES',
+    start: at(2026, month, day, 8),
+    end: at(2026, month, day, 9),
+    canceled,
+  });
+  // Friday 16, Monday 19, Tuesday 20 (canceled), Wednesday 21 October.
+  const student = {
+    lessons: [lessonOn(10, 16), lessonOn(10, 19), lessonOn(10, 20, true), lessonOn(10, 21)],
+  };
+  const thursday = at(2026, 10, 15, 18);
+  const shifted = (which, shift) => resolveDay(student, which, thursday, shift);
+  assert.equal(shifted(DAYS.TODAY, 0), '2026-10-15');
+  assert.equal(shifted(DAYS.TODAY, 1), '2026-10-16');
+  assert.equal(shifted(DAYS.TODAY, 2), '2026-10-19');
+  assert.equal(shifted(DAYS.TODAY, 3), '2026-10-21');
+  assert.equal(shifted(DAYS.NEXT_SCHOOL_DAY, 1), '2026-10-19');
+  assert.equal(shifted(DAYS.TODAY, 4), null, 'not read that far');
+  assert.equal(daySummary(student, DAYS.NEXT_SCHOOL_DAY, thursday, 2).date, '2026-10-21');
+  assert.equal(periodSummary(student, DAYS.TODAY, thursday, 2, 1).to, '2026-10-17');
 });

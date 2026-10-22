@@ -1270,6 +1270,26 @@
           "default": 1,
           "min": 1,
           "max": 8
+        },
+        {
+          "key": "shift",
+          "type": "number",
+          "label": {
+            "en": "Shift",
+            "fr": "Décalage",
+            "de": "Verschiebung",
+            "es": "Desplazamiento"
+          },
+          "description": {
+            "en": "0: that day. 1 to 7: the 1st to 7th school day after it. Put widgets shifted 0, 1, 2… side by side: one column a day.",
+            "fr": "0 : ce jour. 1 à 7 : le 1er au 7e jour de cours après lui. Placez côte à côte des widgets décalés de 0, 1, 2… : une colonne par jour.",
+            "de": "0: dieser Tag. 1 bis 7: der 1. bis 7. Schultag danach. Widgets mit 0, 1, 2… nebeneinander stellen: eine Spalte pro Tag.",
+            "es": "0: ese día. 1 a 7: el 1.º al 7.º día de clase después. Coloque lado a lado widgets desplazados 0, 1, 2…: una columna por día."
+          },
+          "required": false,
+          "default": 0,
+          "min": 0,
+          "max": 7
         }
       ],
       "action_timeout_seconds": 90

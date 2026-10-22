@@ -133,7 +133,11 @@ de clase) → Decir «Primera clase a las {{first_lesson}}. Deberes:
   defecto) lo amplía a un periodo de hasta 8 días desde ese día: una fila por día,
   con su horario y sus asignaturas, y las clases al abrir la fila. **Hoy** y **8**
   muestran de hoy a D+7. Los días sin clases (fin de semana, vacaciones) se
-  omiten.
+  omiten. Su ajuste **Desplazamiento** (0 por defecto) lo lleva de 1 a 7 días de
+  clase más adelante. Para un horario como en papel, una columna por día, añada
+  el widget una vez por día y colóquelos lado a lado: **Próximo día de clase**
+  con **Desplazamiento** 0, 1, 2, 3 y 4 muestra los cinco próximos días de clase,
+  sin fines de semana ni vacaciones.
 
 Cada widget tiene un ajuste **Alumno**: añada un widget por hijo. Todos muestran
 la última lectura: abrir un panel nunca consulta PRONOTE.

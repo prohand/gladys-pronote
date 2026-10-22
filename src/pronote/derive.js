@@ -30,7 +30,7 @@ export function nextSchoolDay(student, now) {
 }
 
 /** The `YYYY-MM-DD` a DAYS value stands for, `null` when unknown. */
-export function resolveDay(student, which, now) {
+function dayOfWhich(student, which, now) {
   if (which === DAYS.TODAY) {
     return dayKey(now);
   }
@@ -40,6 +40,25 @@ export function resolveDay(student, which, now) {
     return dayKey(tomorrow);
   }
   return nextSchoolDay(student, now);
+}
+
+/**
+ * The `YYYY-MM-DD` a DAYS value stands for, then `shift` school days further
+ * (days with a lesson that takes place, so a row of timetable widgets shifted
+ * 0, 1, 2… never shows a weekend). `null` when unknown: the timetable read
+ * does not go that far.
+ */
+export function resolveDay(student, which, now, shift = 0) {
+  const day = dayOfWhich(student, which, now);
+  if (!day || !shift) {
+    return day;
+  }
+  const later = new Set(
+    held(student.lessons)
+      .map((lesson) => dayKey(lesson.start))
+      .filter((key) => key > day),
+  );
+  return [...later].sort()[shift - 1] ?? null;
 }
 
 /** The next lesson that takes place and has not started yet. */
@@ -135,10 +154,11 @@ function dayOf(student, day) {
  * @param {string} which a DAYS value, the first day
  * @param {Date} now
  * @param {number} count how many calendar days
+ * @param {number} [shift] school days after that day, see resolveDay
  * @returns {{ from: string, to: string, days: object[] }} `from` empty when unknown
  */
-export function periodSummary(student, which, now, count) {
-  const from = resolveDay(student, which, now);
+export function periodSummary(student, which, now, count, shift = 0) {
+  const from = resolveDay(student, which, now, shift);
   if (!from) {
     return { from: '', to: '', days: [] };
   }
@@ -158,9 +178,10 @@ export function periodSummary(student, which, now, count) {
  * @param {object} student a snapshot student
  * @param {string} which a DAYS value
  * @param {Date} now
+ * @param {number} [shift] school days after that day, see resolveDay
  */
-export function daySummary(student, which, now) {
-  const day = resolveDay(student, which, now);
+export function daySummary(student, which, now, shift = 0) {
+  const day = resolveDay(student, which, now, shift);
   if (!day) {
     return { date: '', lessons: [], held: [], canceled: [], homework: [] };
   }

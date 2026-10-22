@@ -248,6 +248,29 @@ test('the timetable widget over several days, one row a day', async () => {
   assert.match(empty.components[1].text.fr, /Pas de cours sur cette période/);
 });
 
+test('shifted timetable widgets make one column a day', async () => {
+  await current.sync.sync();
+  for (const language of LANGUAGES) {
+    await content('timetable', { student: studentId(0), day: 'today', shift: 1 }, language);
+    await content('timetable', { student: studentId(0), day: 'today', shift: 2 }, language);
+  }
+  const column = async (shift) =>
+    (await content('timetable', { student: studentId(0), day: 'today', shift }, 'fr')).components;
+  assert.match((await column(0))[0].text, /mercredi 14 octobre/);
+  assert.match((await column(1))[0].text, /jeudi 15 octobre/);
+  // Unset (an instance saved before the setting), or out of bounds: no shift.
+  assert.match((await column(undefined))[0].text, /mercredi 14 octobre/);
+  assert.match((await column(-3))[0].text, /mercredi 14 octobre/);
+  // Léa has no lesson read after Thursday.
+  assert.match((await column(2))[1].text.fr, /pas encore dans l’emploi du temps/);
+  const period = await content(
+    'timetable',
+    { student: studentId(0), day: 'today', days: 3, shift: 1 },
+    'fr',
+  );
+  assert.equal(period.components[0].text, 'DURAND · jeu. 15/10 → sam. 17/10');
+});
+
 test('during the holidays, the widgets look at the return', async () => {
   // Tuesday 20 October, Toussaint holidays: PRONOTE shows the homework and the
   // lessons of Monday 2 November, the widgets did not look that far.

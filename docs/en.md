@@ -125,7 +125,10 @@ Say "First lesson at {{first_lesson}}. Homework: {{homework_text}}"_.
   widens it to a period of up to 8 days from that day: one row a day, with its
   hours and subjects, and the lessons when the row is opened. **Today** and
   **8** show today to D+7. Days without lessons (weekend, holidays) are left
-  out.
+  out. Its **Shift** setting (0 by default) moves it 1 to 7 school days further.
+  For a paper-like timetable, one column a day, add the widget once per day and
+  place them side by side: **Next school day** with **Shift** 0, 1, 2, 3 and 4
+  shows the next five school days, weekends and holidays skipped.
 
 Each widget has a **Student** setting: add a widget once per child. All show the
 last read: opening a dashboard never calls PRONOTE.
