@@ -6,6 +6,10 @@ All notable changes to this integration are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.0.11] - 2026-10-23
+
+- Maintenance release, no functional change.
+
 ## [0.0.10] - 2026-10-22
 
 ### Added
@@ -88,7 +92,8 @@ All notable changes to this integration are documented here. The format follows
 - Configuration buttons: test the connection, log in with a QR code, forget the saved session.
 - Texts in English, French, German and Spanish (configuration screen, messages, widgets, documentation).
 
-[Unreleased]: https://github.com/prohand/gladys-pronote/compare/v0.0.10...HEAD
+[Unreleased]: https://github.com/prohand/gladys-pronote/compare/v0.0.11...HEAD
+[0.0.11]: https://github.com/prohand/gladys-pronote/compare/v0.0.10...v0.0.11
 [0.0.10]: https://github.com/prohand/gladys-pronote/compare/v0.0.9...v0.0.10
 [0.0.9]: https://github.com/prohand/gladys-pronote/compare/v0.0.8...v0.0.9
 [0.0.8]: https://github.com/prohand/gladys-pronote/compare/v0.0.7...v0.0.8
