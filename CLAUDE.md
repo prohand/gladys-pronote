@@ -105,7 +105,8 @@ test/                        node --test, fake pawnote + the SDK's fake Gladys
 scene / widget handlers, the keys each scene event sends vs the declared
 `fields` + `variables`, the day options, the 4 languages and the store length
 limits. Change both sides together. Fields the older cores do not know need a
-higher `gladys_version` (scene/widget declarations: 5.1.0).
+higher `gladys_version` (scene/widget declarations: 5.1.0; catalog `keywords` and
+`countries`: 5.3.0, the floor today).
 
 ## Rules
 

@@ -30,7 +30,8 @@ User documentation: [English](docs/en.md) · [Français](docs/fr.md) ·
 | Languages              | English, French, German, Spanish                                                                                             |
 | Transport              | `cloud` (the PRONOTE server is on the internet)                                                                              |
 
-Requires **Gladys ≥ 5.1.0** (scene and widget declarations).
+Requires **Gladys ≥ 5.3.0** (catalog keywords and countries; scene and widget declarations
+need 5.1.0).
 
 ## How it works
 

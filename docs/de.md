@@ -13,7 +13,7 @@ Gefundene als Gladys-Geräte, Szenenauslöser und Dashboard-Widgets.
 
 ## Voraussetzungen
 
-- Gladys **5.1 oder neuer**.
+- Gladys **5.3 oder neuer**.
 - Ein PRONOTE-Konto als **Schüler** oder **Eltern** (Lehrkräftekonten werden nicht
   unterstützt).
 - Die Adresse deines PRONOTE-Bereichs, wie dein Browser sie anzeigt, z. B.
