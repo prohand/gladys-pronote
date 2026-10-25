@@ -13,7 +13,7 @@ encuentra como dispositivos de Gladys, disparadores de escenas y widgets del pan
 
 ## Requisitos
 
-- Gladys **5.1 o posterior**.
+- Gladys **5.3 o posterior**.
 - Una cuenta PRONOTE de **alumno** o de **padres** (las cuentas de profesor no son
   compatibles).
 - La dirección de su espacio PRONOTE, tal como la muestra su navegador, por ejemplo

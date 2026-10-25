@@ -202,6 +202,11 @@ const CATEGORIES = [
   'notifications',
   'assistants',
   'services',
+  // Added by Gladys 5.3.
+  'transport',
+  'vehicles',
+  'servers',
+  'leisure',
 ];
 
 test('the categories stay inside the vocabulary the store indexes', () => {
@@ -211,9 +216,43 @@ test('the categories stay inside the vocabulary the store indexes', () => {
   }
 });
 
+// The minimum of `gladys_version`, compared as numbers: an older core rejects
+// any manifest field it does not know, so every field moves with its floor.
+function floorAtLeast(major, minor) {
+  const [floorMajor, floorMinor] = manifest.gladys_version
+    .replace(/^>=/, '')
+    .split('.')
+    .map(Number);
+  return floorMajor > major || (floorMajor === major && floorMinor >= minor);
+}
+
 test('the Gladys floor covers the scene and widget declarations', () => {
-  const [major, minor] = manifest.gladys_version.replace(/^>=/, '').split('.').map(Number);
-  assert.ok(major > 5 || (major === 5 && minor >= 1), manifest.gladys_version);
+  assert.ok(floorAtLeast(5, 1), manifest.gladys_version);
+  assert.ok(floorAtLeast(4, 86), 'categories need Gladys 4.86.0');
+});
+
+test('keywords and countries need Gladys 5.3.0', () => {
+  for (const field of ['keywords', 'countries', 'music']) {
+    if (manifest[field] !== undefined) {
+      assert.ok(floorAtLeast(5, 3), `${field} needs Gladys 5.3.0`);
+    }
+  }
+});
+
+test('keywords: 1 to 10 unique search terms of 2 to 30 characters', () => {
+  assert.ok(manifest.keywords.length >= 1 && manifest.keywords.length <= 10);
+  const normalized = manifest.keywords.map((keyword) => keyword.trim().toLowerCase());
+  assert.equal(new Set(normalized).size, normalized.length, 'duplicate keyword');
+  for (const keyword of normalized) {
+    assert.ok(keyword.length >= 2 && keyword.length <= 30, keyword);
+  }
+});
+
+test('countries: PRONOTE is the school software of France', () => {
+  assert.deepEqual(manifest.countries, ['FR']);
+  for (const country of manifest.countries) {
+    assert.match(country, /^[A-Z]{2}$/);
+  }
 });
 
 /** Every multi-language object of the manifest, with where it sits. */

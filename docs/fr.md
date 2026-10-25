@@ -14,7 +14,7 @@ scènes et de widgets de tableau de bord.
 
 ## Prérequis
 
-- Gladys **5.1 ou plus récent**.
+- Gladys **5.3 ou plus récent**.
 - Un compte PRONOTE **élève** ou **parent** (les comptes enseignants ne sont pas
   pris en charge).
 - L'adresse de votre espace PRONOTE, telle que l'affiche votre navigateur, par

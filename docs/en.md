@@ -13,7 +13,7 @@ what it finds as Gladys devices, scene triggers and dashboard widgets.
 
 ## Requirements
 
-- Gladys **5.1 or later**.
+- Gladys **5.3 or later**.
 - A PRONOTE **student** or **parent** account (teacher accounts are not supported).
 - The address of your PRONOTE space, as shown by your browser, for example
   `https://0123456a.index-education.net/pronote/`.
