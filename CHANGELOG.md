@@ -6,6 +6,8 @@ All notable changes to this integration are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-10-25
+
 ### Added
 
 - Catalog search keywords (Index Éducation, vie scolaire, collège, lycée…) and the country (France) in the manifest, so the Gladys catalog finds the integration and shows it to French instances.
@@ -102,7 +104,8 @@ All notable changes to this integration are documented here. The format follows
 - Configuration buttons: test the connection, log in with a QR code, forget the saved session.
 - Texts in English, French, German and Spanish (configuration screen, messages, widgets, documentation).
 
-[Unreleased]: https://github.com/prohand/gladys-pronote/compare/v0.0.11...HEAD
+[Unreleased]: https://github.com/prohand/gladys-pronote/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/prohand/gladys-pronote/compare/v0.0.11...v0.1.0
 [0.0.11]: https://github.com/prohand/gladys-pronote/compare/v0.0.10...v0.0.11
 [0.0.10]: https://github.com/prohand/gladys-pronote/compare/v0.0.9...v0.0.10
 [0.0.9]: https://github.com/prohand/gladys-pronote/compare/v0.0.8...v0.0.9
