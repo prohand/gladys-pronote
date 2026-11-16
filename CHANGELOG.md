@@ -6,6 +6,10 @@ All notable changes to this integration are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.1.4] - 2026-11-16
+
+- Maintenance release, no functional change.
+
 ## [0.1.3] - 2026-11-16
 
 - Update `@gladysassistant/integration-sdk` to 0.16.1 (security update).
@@ -118,7 +122,8 @@ All notable changes to this integration are documented here. The format follows
 - Configuration buttons: test the connection, log in with a QR code, forget the saved session.
 - Texts in English, French, German and Spanish (configuration screen, messages, widgets, documentation).
 
-[Unreleased]: https://github.com/prohand/gladys-pronote/compare/v0.1.3...HEAD
+[Unreleased]: https://github.com/prohand/gladys-pronote/compare/v0.1.4...HEAD
+[0.1.4]: https://github.com/prohand/gladys-pronote/compare/v0.1.3...v0.1.4
 [0.1.3]: https://github.com/prohand/gladys-pronote/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/prohand/gladys-pronote/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/prohand/gladys-pronote/compare/v0.1.0...v0.1.1
