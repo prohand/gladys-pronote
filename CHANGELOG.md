@@ -6,6 +6,10 @@ All notable changes to this integration are documented here. The format follows
 
 ## [Unreleased]
 
+### Security
+
+- Dependencies updated to fix known vulnerabilities (npm audit).
+
 ## [0.1.1] - 2026-10-25
 
 - Maintenance release, no functional change.
